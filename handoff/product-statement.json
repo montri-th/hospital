@@ -1,0 +1,239 @@
+{
+  "$schema": "./handoff.schema.json",
+  "schemaVersion": "1.5.0",
+  "productId": "citymeter-hospital",
+  "productVersion": "0.1.0",
+  "updatedOn": "2026-11-05",
+  "documentType": "product-statement",
+  "dataset_id": "research.TH.hospital",
+  "productionDatasetCode": "hospital",
+  "language": "th",
+  "liveUrl": "https://montri-th.github.io/hospital/",
+  "markdown": "PRODUCT_STATEMENT.md",
+  "positioning": {
+    "one_line_highlight": "แผนที่เมือง 3 มิติของเตียงสถานพยาบาลทั่วไทย ที่บอกว่ากระจุกตรงไหน ใกล้รถไฟฟ้าแค่ไหน สังกัดใคร มีมาตรฐานและราคาแล็บที่เผยแพร่หรือไม่ และมีที่ใดให้เทียบ พร้อมแหล่งของทุกตัวเลข",
+    "question": "เตียงสถานพยาบาลกระจุกอยู่ตรงไหน และใกล้รถไฟฟ้าแค่ไหน",
+    "unique_advantage": "ทะเบียน HCODE + ชุด Hospital ของ CityMETER production ในเขต/อำเภอเดียวกับ production รวมหลักฐาน HA/JCI ราคาแล็บ DIT บริการ และสถานีราง ในแผนที่ 3 มิติที่กดถึงแถวและแหล่งได้",
+    "unique_vs_competitors": "ทะเบียนและไดเรกทอรีตอบทีละแห่ง แผนที่ค้นสถานที่ไม่มีเตียงและสังกัด รายงานที่ปรึกษาไม่ลงถึงเขตและรายแห่ง — Hospital รวมทั้งสามระดับพร้อมตัวตั้ง ตัวหาร และแหล่ง"
+  },
+  "users": {
+    "primary_users": [
+      "ทีมขยายสาขาและพัฒนาธุรกิจของเครือโรงพยาบาลเอกชน",
+      "ทีมพัฒนาโครงการและนักลงทุนอสังหาฯ (โครงการสุขภาพ mixed-use)",
+      "ผู้วางแผนเครือข่ายบริการ (ประกันสุขภาพ TPA สสจ. เขตสุขภาพ)",
+      "ผู้ประเมินมูลค่าและสถาบันการเงิน"
+    ],
+    "functional_needs": [
+      "เตียงต่อเขต/อำเภอและรอบทำเล",
+      "ประเภท สังกัด ระดับของสถานพยาบาลรอบ ๆ",
+      "คู่เทียบขนาดใกล้กันพร้อมมาตรฐานและราคาแล็บ",
+      "ระยะถึงสถานีรถไฟฟ้า",
+      "บทบาทในเครือข่าย สปสช. และบริการที่ระบุ"
+    ],
+    "emotional_needs": [
+      "มั่นใจว่าไม่ลงทุนซ้อนกับโรงพยาบาลขนาดเดียวกัน",
+      "อธิบายต่อผู้บริหาร/ผู้ลงทุนได้ด้วยหลักฐาน",
+      "ไม่พลาดหน่วยบริการสำคัญในเครือข่าย"
+    ],
+    "trigger_voice_in_head": [
+      "ใน 5 กม. มีโรงพยาบาลเอกชนขนาดเราอยู่กี่แห่ง มี JCI ไหม",
+      "ย่านนี้มีโรงพยาบาลใหญ่กี่แห่ง ใกล้รถไฟฟ้าไหม",
+      "อำเภอนี้มีหน่วยรับส่งต่อกี่แห่ง สังกัดอะไร"
+    ],
+    "value_proposition": "ภายในนาทีเดียวเห็นว่าเตียงกระจุกที่ไหน ใกล้รถไฟฟ้าแค่ไหน และมีคู่เทียบใด พร้อมแหล่งของทุกตัวเลข"
+  },
+  "problem": {
+    "statement": "ข้อมูลสถานพยาบาลแยกอยู่ในทะเบียน HCODE ไดเรกทอรี HA/JCI ราคาที่ DIT ประกาศ ทะเบียนหน่วยบริการ สปสช. และหน้าเว็บของแต่ละโรงพยาบาล ไม่มีภาพที่บอกว่าเตียงกระจุกที่เขตใด ใกล้ขนส่งแค่ไหน และมีคู่เทียบขนาดใกล้กันใดอยู่รอบ ๆ",
+    "urgency": "โรงพยาบาลเป็นการลงทุนอาคารและใบอนุญาตที่ย้ายไม่ได้และใช้เวลาหลายปี",
+    "severity": "อุปทานเตียงในย่านเดียวกันเปลี่ยนสมมติฐานรายได้และการจัดเครือข่ายทั้งโครงการ"
+  },
+  "competitor_landscape": {
+    "present_competitors": [
+      {
+        "name": "ทะเบียนสถานพยาบาล HCODE",
+        "how_users_use_it": "ค้นทีละแห่ง ดาวน์โหลดไฟล์ทั้งประเทศ",
+        "strength": "ครอบคลุมทุกประเภท มีเตียงและสังกัด",
+        "gap": "ไม่มีแผนที่ การรวมรายเขต บริบทขนส่ง มาตรฐาน หรือราคา"
+      },
+      {
+        "name": "ไดเรกทอรี HA / JCI",
+        "how_users_use_it": "ตรวจการรับรองของโรงพยาบาล",
+        "strength": "หลักฐานมาตรฐานที่เป็นทางการ",
+        "gap": "ตอบทีละแห่ง ไม่บอกตำแหน่งเทียบอุปทานรอบ ๆ"
+      },
+      {
+        "name": "ราคาค่ารักษาของ DIT",
+        "how_users_use_it": "เทียบราคารายการเดียวทีละโรงพยาบาล",
+        "strength": "ราคาที่โรงพยาบาลแจ้งรัฐ",
+        "gap": "ไม่มีบริบทพื้นที่หรือระดับเทียบกลุ่ม"
+      },
+      {
+        "name": "Google Maps / ค้นหาเว็บ",
+        "how_users_use_it": "หาโรงพยาบาลใกล้จุด อ่านรีวิว",
+        "strength": "สด มีรูปและระยะเดินทาง",
+        "gap": "ไม่มีเตียง สังกัด หรือการรวมรายพื้นที่ที่ตรวจย้อนได้"
+      }
+    ],
+    "aspirational_competitors": [
+      "location intelligence ที่รวม supply, demand และ access ในแผนที่เดียว"
+    ],
+    "expected_quality_bar": "ตัวเลขทุกตัวกดถึงแหล่ง วันที่ และวิธีนับได้ภายในหนึ่งคลิก"
+  },
+  "winning_strategy": [
+    "วัดสิ่งที่การลงทุนสนใจ: เตียงตามทะเบียน (li.supply) เป็นค่าเริ่มต้น สลับเป็นจำนวนแห่งได้",
+    "ขอบเขตเดียวกับ CityMETER production และลิงก์ ?d=hospital",
+    "ข้ามชุดข้อมูลในทะเบียนด้วย id: สถานีราง CityMETER · Transit",
+    "ข้อเท็จจริงรายแห่งที่ตรวจย้อนได้: สังกัด ระดับ HA/JCI ราคาแล็บ DIT บริการ บทบาท สปสช.",
+    "คู่เทียบตามกฎที่เห็นเป็นชิป"
+  ],
+  "firstFinding": {
+    "evidence": "Observed fact",
+    "beds": {
+      "home": "BKK",
+      "areas": [
+        {
+          "id": "1037",
+          "name": "ราชเทวี",
+          "value": 5891
+        },
+        {
+          "id": "1020",
+          "name": "บางกอกน้อย",
+          "value": 2863
+        },
+        {
+          "id": "1007",
+          "name": "ปทุมวัน",
+          "value": 2230
+        }
+      ],
+      "value": 10984,
+      "homePlacedValue": 34030,
+      "homeValue": 34030,
+      "sharePct": 32,
+      "rail": {
+        "m": 500,
+        "focus": {
+          "within": 4198,
+          "base": 10983
+        },
+        "rest": {
+          "within": 8285,
+          "base": 22430
+        }
+      },
+      "outside": {
+        "id": "5001",
+        "name": "เมืองเชียงใหม่",
+        "province": "CMI",
+        "value": 4113
+      }
+    },
+    "records": {
+      "home": "BKK",
+      "areas": [
+        {
+          "id": "1006",
+          "name": "บางกะปิ",
+          "value": 150
+        },
+        {
+          "id": "1030",
+          "name": "จตุจักร",
+          "value": 148
+        }
+      ],
+      "value": 298,
+      "homePlacedValue": 3439,
+      "homeValue": 3439,
+      "sharePct": 9,
+      "rail": {
+        "m": 500,
+        "focus": {
+          "within": 10,
+          "base": 26
+        },
+        "rest": {
+          "within": 97,
+          "base": 336
+        }
+      },
+      "outside": {
+        "id": "9011",
+        "name": "หาดใหญ่",
+        "province": "SKA",
+        "value": 460
+      }
+    }
+  },
+  "data_transparency": {
+    "unit": {
+      "row": "one row of 02_FACILITIES — a source identity the owner approved into the dataset: a CityMETER production Hospital record or an HCODE register record; not a field-verified census of unique operating facilities",
+      "beds": "official_reported_beds_text — the beds in use HCODE reports; 0 is a reported 0, blank is unknown; not staffed beds or occupancy",
+      "price": "DIT published prices of six lab items (CBC 30101, UA 31001, lipid 32004, BUN 32201, creatinine 32202, glucose 32203) and their sum; effective date not shown by the source; not a bill, a package or the facility’s price level",
+      "quality": "HA stage and recorded dates (HA snapshot 31 Aug 2026 + public directory 31 Oct 2026) and JCI programmes (directory 31 Oct 2026) as published; accreditation evidence, not an outcome ranking"
+    },
+    "sources": [
+      "CityMETER production Hospital (12,516 records with points)",
+      "HCODE register (29,312 records)",
+      "HA snapshot 2026-08-31 + directory 2026-10-31",
+      "JCI directory 2026-10-31",
+      "DIT hospital prices 2026-10-31",
+      "NHSO mastercupuc FY2568 Q3 (via production)",
+      "CityMETER · Transit transit-data-2026-10-31-r1"
+    ],
+    "tabs": {
+      "02_FACILITIES": "20a0d51b5188f86340585fe193a7e8542e5b04a12fbe5f75497aa283669be3e9",
+      "99_SOURCE_OBSERVATIONS": "9ce14515684e06077396cf1f83a2ec00c0bf0d83bc8e22208cc79f8ef26f4a0a",
+      "08_ACCREDITATION": "1f916878c1b15f6693d53d3b0010588c0a8c5856a0a5f61a5203e248c8a86652",
+      "11_PRICE_BASKET": "be5aa8234e3672a910c6b74d799ba7b847225a4ca061a233c2a8e6577c7e0007",
+      "13_SERVICE_PROFILE": "34acebb2b67b7411c59b4ee9e9d0d0b3db923b8aa9c5e84e09e62c2fbddf96f4",
+      "15_SERVICE_FRAMEWORK": "1a9ef612b9648e0d59a542a035df7572ed7c67fe4b99b1d565a0d8e24cc469ed",
+      "10_SOURCES": "c49aa8dd2206ada001ff3d778593d46d71442bb94ca8567df5a2f1bfbbfdf31e",
+      "01_BRANDS": "4a68829beefc0bbf7ed7d3cf64863af398b727459ab609b967fd0d537aab89c8",
+      "03_AREA_SUMMARY": "1644ca80d13b76f5c382fddebe5aa0a871a53162c879a95b094cacf7f2e42779",
+      "12_IDENTITY_LINKS": "2a3e310b3daddaa5d3d43e43339a48b8ddb3033d5271986fbd0dcfd54b1eef3f"
+    },
+    "method": "DATA_METHOD.md"
+  },
+  "known_limitations": [
+    "Records are source identities of the register; operation is not revalidated and the register is not a census of unique facilities.",
+    "Beds are the beds HCODE reports, not staffed beds or occupancy; 16,453 records have unknown beds.",
+    "29,312 HCODE records (mostly clinics) have no point: they count in their district but are not on the map.",
+    "Accreditation, lab prices and services are evidence where the sheet found it; a gap is not a low value.",
+    "Building units are those of CityMETER · Hotel 0.3.6 (units holding a hotel); elsewhere OpenStreetMap."
+  ],
+  "claimBoundary": {
+    "canSay": [
+      "เตียงที่ทะเบียนรายงานกระจุกที่ใด",
+      "ประเภท สังกัด ระดับของสถานพยาบาล",
+      "ระยะตรงถึงสถานีรถไฟฟ้า",
+      "หลักฐานมาตรฐานและราคาแล็บที่เผยแพร่รายแห่ง",
+      "คู่เทียบตามกฎ"
+    ],
+    "cannotSay": [
+      "อัตราครองเตียง เตียงที่เปิดใช้จริง หรือจำนวนผู้ป่วย",
+      "อันดับคุณภาพหรือผลการรักษา",
+      "ส่วนแบ่งตลาดหรือรายได้",
+      "สถานพยาบาลเปิดวันนี้",
+      "เวลาเดินทางหรือพื้นที่บริการ"
+    ]
+  },
+  "hypotheses_to_validate": [
+    {
+      "hypothesis": "ทีมขยายสาขาเครือโรงพยาบาลใช้คู่เทียบแทนการรวบรวมเองเบื้องต้น",
+      "test": "สัมภาษณ์ 5 ทีม ให้ทำงานคัดกรองทำเลจริง 1 งาน",
+      "criterion": "≥ 3 ใน 5 ทีมใช้รายชื่อคู่เทียบเป็นจุดเริ่ม และประหยัดเวลา ≥ 1 วัน"
+    },
+    {
+      "hypothesis": "เตียงตามทะเบียนเป็นตัววัดอุปทานที่ผู้ใช้ยอมรับ",
+      "test": "เทียบกับเตียงที่โรงพยาบาลเผยแพร่เองใน 30 แห่งสุ่ม",
+      "criterion": "ต่างกันไม่เกิน 15% ใน ≥ 80% ของแห่งที่ตรวจ"
+    },
+    {
+      "hypothesis": "ผู้วางแผนเครือข่ายต้องการบทบาท สปสช. และบริการบนแผนที่เดียวกัน",
+      "test": "ทดสอบกับผู้ใช้ประกัน/TPA 3 ราย",
+      "criterion": "หาหน่วยรับส่งต่อในอำเภอเป้าหมายได้ภายใน 2 นาที"
+    }
+  ]
+}

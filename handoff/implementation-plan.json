@@ -1,0 +1,409 @@
+{
+  "$schema": "./handoff.schema.json",
+  "schemaVersion": "1.5.0",
+  "productId": "citymeter-hospital",
+  "productVersion": "0.1.0",
+  "updatedOn": "2026-11-05",
+  "documentType": "implementation-plan",
+  "architecture": {
+    "runtime": "static site (GitHub Pages), ES modules with an import map, no build step; Node ≥ 20 for tests, Python 3 for data builds",
+    "commands": {
+      "test": "node --test tests/*.test.js",
+      "start": "python3 -m http.server 4173 --bind 127.0.0.1",
+      "build:base": "python3 -I scripts/fetch-base.py --help",
+      "build:points": "python3 -I scripts/fetch-points.py --help",
+      "build:boundaries": "python3 -I scripts/build-boundaries.py --help",
+      "build:receipts": "python3 -I scripts/build-receipts.py --help",
+      "build:data": "python3 -I scripts/build-data.py --help",
+      "build:units": "python3 -I scripts/build-building-units.py --help",
+      "check:lds": "node scripts/check-lds-parity.mjs",
+      "handoff:manifest": "node scripts/build-handoff.mjs",
+      "handoff:bundle": "node scripts/build-handoff.mjs --zip dist/CityMETER-Hospital-Developer-Handoff.zip",
+      "verify:live": "node scripts/verify-live.mjs"
+    },
+    "libraries": {
+      "maplibre": "MapLibre GL JS 5.6.2 (unpkg, pinned; js/maplibre-guard.js)",
+      "earcut": "js/vendor/earcut.js (ISC)",
+      "tiles": "OpenFreeMap planet (OpenMapTiles schema)"
+    },
+    "modules": {
+      "js/app.js": "",
+      "js/model.js": "vocabulary, decoding of data/hospitals.json, measures (beds | count), filters, pin sizes, short names",
+      "js/areas.js": "",
+      "js/area-insight.js": "",
+      "js/profile-model.js": "view models: overview, district, station, building, facility detail, affiliation card, comparison set (compsetOf)",
+      "js/panel.js": "reading-panel views as HTML strings: overview (+ affiliation card), district, station, building, facility (quality, lab prices, services, comparison set); one provenance line per view",
+      "js/charts.js": "",
+      "js/chart-model.js": "",
+      "js/map-layers.js": "",
+      "js/provinces.js": "",
+      "js/frames.js": "",
+      "js/scales.js": "",
+      "js/cues.js": "",
+      "js/pins.js": "",
+      "js/stations.js": "",
+      "js/ask.js": "",
+      "js/breadcrumb.js": "",
+      "js/building-join.js": "",
+      "js/massing.js": "city and focus massing tiers; CityMETER Building V4 inside CityMETER units (shapeCmTile, planCmRequests), OSM parts override, context layer, credit",
+      "js/camera.js": "presets, pitched fits and the building camera (terrain-aware: groundAt, projectAltitude)",
+      "js/venue-xray.js": "",
+      "js/map-style.js": "",
+      "js/maplibre-guard.js": "",
+      "js/mvt.js": "",
+      "js/geometry.js": "",
+      "js/navigation.js": "",
+      "js/vendors.js": "",
+      "js/launch.js": "",
+      "js/labels.js": "names near the middle of the view (importance = beds percentile + published accreditation), short names (รพ. · รพ.สต. · ศบส.), hover card of icon chips",
+      "js/terrain.js": "terrain mode at hilly sites and round a building or facility being looked at (site relief), changes only while the camera is still",
+      "js/building-units.js": "buildings per area: the per-province unit files (data/building-units/), CityMETER zones, production tile URLs and the attribution"
+    },
+    "data": [
+      "data/hospitals.json",
+      "data/build-report.json",
+      "data/area-index.json",
+      "data/frames/{CODE}.json",
+      "data/provinces.geojson",
+      "data/boundary-receipts.json",
+      "data/building-units/"
+    ]
+  },
+  "selection": {
+    "filterFields": [
+      "search",
+      "group",
+      "size",
+      "province",
+      "aff"
+    ],
+    "queryFields": [
+      "metric",
+      "area",
+      "areas",
+      "view",
+      "facility",
+      "station",
+      "view3d"
+    ],
+    "rowScopes": {
+      "scopeRows": "rows after search · group · size · province · affiliation, before any district selection or focus: the comparison base of the Aha, the choropleth, the charts and every rank",
+      "baseRows": "scopeRows narrowed by the selected เขต/อำเภอ",
+      "rows": "baseRows narrowed by the district focus: pins with detail, counters, the table (a building or station panel shows its own rows)"
+    },
+    "panelActions": [
+      "select-area",
+      "select-facility",
+      "select-building",
+      "select-station",
+      "select-province",
+      "filter-aff",
+      "filter-group",
+      "set-metric",
+      "back",
+      "explore-top",
+      "clear-focus",
+      "open-charts",
+      "open-table",
+      "clear-filter",
+      "leave-area"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Read the research master tabs in the owner’s browser and bind each by its SHA-256",
+      "dependsOn": [],
+      "files": [
+        "scripts/export-sheet-tabs.js"
+      ],
+      "acceptanceCriteria": [
+        "10 tabs read cell by cell from the HTML view",
+        "meta.tabs holds rows, columns and SHA-256 per tab"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T2",
+      "title": "Production base info and Hospital points with receipts",
+      "dependsOn": [],
+      "files": [
+        "scripts/fetch-base.py",
+        "scripts/fetch-points.py",
+        "scripts/build-receipts.py",
+        "data/boundary-receipts.json"
+      ],
+      "acceptanceCriteria": [
+        "78 base receipts, same SHA-256 as Hotel’s",
+        "928 point requests, 12,516 unique codes"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T3",
+      "title": "Data build: rows, measures, membership, context, quality, prices, services",
+      "dependsOn": [
+        "T1",
+        "T2"
+      ],
+      "files": [
+        "scripts/build-data.py",
+        "data/hospitals.json",
+        "data/build-report.json"
+      ],
+      "acceptanceCriteria": [
+        "41,828 rows, nothing dropped, ids unique",
+        "province totals reconcile with 03_AREA_SUMMARY",
+        "basket sums equal their items; levels follow the cut-offs",
+        "every production point used once"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T4",
+      "title": "Model and panels for facilities (beds | records, groups, affiliations, quality, prices, services, comparison set)",
+      "dependsOn": [
+        "T3"
+      ],
+      "files": [
+        "js/model.js",
+        "js/profile-model.js",
+        "js/panel.js",
+        "js/area-insight.js",
+        "js/areas.js",
+        "js/provinces.js",
+        "js/chart-model.js",
+        "js/charts.js"
+      ],
+      "acceptanceCriteria": [
+        "tests/views.test.js, tests/insight.test.js, tests/data.test.js pass",
+        "no hotel word on screen"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T5",
+      "title": "Map: pins sized by beds, labels, stations, building view",
+      "dependsOn": [
+        "T4"
+      ],
+      "files": [
+        "js/app.js",
+        "js/pins.js",
+        "js/labels.js",
+        "js/stations.js",
+        "js/cues.js",
+        "js/scales.js",
+        "js/map-layers.js"
+      ],
+      "acceptanceCriteria": [
+        "a reported 0 at the 3 px floor, unknown hollow",
+        "facility click opens the two-point building view in 3D"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T6",
+      "title": "Pictogram subset with hospital glyphs",
+      "dependsOn": [],
+      "files": [
+        "scripts/build-pictogram-font.py",
+        "assets/icons/material-pictogram-300.woff2",
+        "assets/icons/material-pictogram-300.json",
+        "js/navigation.js",
+        "styles.css"
+      ],
+      "acceptanceCriteria": [
+        "font hash tag in styles.css and the navigation contract (tests/icons.test.js)"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T7",
+      "title": "Page shell and copy",
+      "dependsOn": [
+        "T4",
+        "T5"
+      ],
+      "files": [
+        "index.html",
+        "styles.css",
+        "js/launch.js",
+        "site.webmanifest",
+        "llms.txt"
+      ],
+      "acceptanceCriteria": [
+        "one cache tag on every entry and module",
+        "help, legend, filters and table in hospital words"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T8",
+      "title": "Docs and handoff",
+      "dependsOn": [
+        "T3",
+        "T4",
+        "T5"
+      ],
+      "files": [
+        "README.md",
+        "DATA_METHOD.md",
+        "PRODUCT_STATEMENT.md",
+        "AGENTS.md",
+        "design-intent.json",
+        "handoff/"
+      ],
+      "acceptanceCriteria": [
+        "handoff JSON valid against handoff.schema.json",
+        "one product version across package.json, design intent and the handoff JSON"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "T9",
+      "title": "Release: GitHub Pages, live attestation and the registry",
+      "dependsOn": [
+        "T7",
+        "T8"
+      ],
+      "files": [
+        "handoff/VERIFICATION.md",
+        "scripts/verify-live.mjs",
+        "scripts/build-handoff.mjs"
+      ],
+      "acceptanceCriteria": [
+        "npm run verify:live: every published file matches the manifest",
+        "research.TH.hospital demo URLs and a Changes row in the registry"
+      ],
+      "status": "done"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "A1",
+      "scenario": "decode hospitals.json",
+      "expected": "41828 rows, nothing dropped, ids unique",
+      "verificationType": "unit (tests/data.test.js)"
+    },
+    {
+      "id": "A2",
+      "scenario": "first Aha, beds",
+      "expected": "BKK · ราชเทวี 5,891 · บางกอกน้อย 2,863 · ปทุมวัน 2,230 = 10,984 / 34,030 (32%); rail 38% vs 37%; outside เมืองเชียงใหม่ 4,113",
+      "verificationType": "unit (tests/insight.test.js, tests/views.test.js)"
+    },
+    {
+      "id": "A3",
+      "scenario": "first Aha, records",
+      "expected": "BKK · บางกะปิ 150 · จตุจักร 148 (a tie below); outside หาดใหญ่ 460 > every เขต",
+      "verificationType": "unit"
+    },
+    {
+      "id": "A4",
+      "scenario": "group without beds (รพ.สต.)",
+      "expected": "records Aha with “ไม่มีเตียงตามทะเบียน” and the switch to records",
+      "verificationType": "unit + rendered"
+    },
+    {
+      "id": "A5",
+      "scenario": "facility panel (Bumrungrad CMH-11699)",
+      "expected": "538 เตียง · 500+, HA ขั้นก้าวหน้า ถึง 22 พ.ค. 2572, JCI · 3 โปรแกรม, basket ฿7,840 สูงมาก, คู่เทียบ 3 แห่ง ≤ 5 กม.",
+      "verificationType": "unit + rendered"
+    },
+    {
+      "id": "A6",
+      "scenario": "no caveat on screen, one provenance line per view",
+      "expected": "tests/views.test.js",
+      "verificationType": "unit"
+    },
+    {
+      "id": "A7",
+      "scenario": "release consistency",
+      "expected": "one cache tag, one product version, handoff JSON valid, no private links",
+      "verificationType": "unit (tests/release.test.js)"
+    },
+    {
+      "id": "A8",
+      "scenario": "live",
+      "expected": "npm run verify:live: every published file matches the manifest; the page renders the Aha on the real basemap",
+      "verificationType": "live"
+    },
+    {
+      "id": "A9",
+      "scenario": "measure contract",
+      "expected": "beds sum 186,453; a reported 0 is 0; unknown beds counted apart (16,453), never 0",
+      "verificationType": "unit (tests/data.test.js)"
+    },
+    {
+      "id": "A10",
+      "scenario": "membership",
+      "expected": "every row in a production district of its own province (admin.name 41,828); production points never move a row",
+      "verificationType": "unit (tests/data.test.js)"
+    },
+    {
+      "id": "A11",
+      "scenario": "district model EVID-05",
+      "expected": "beds: 12 measured_zero districts, records all unknown → no_data; records: 0 measured_zero",
+      "verificationType": "unit (tests/insight.test.js)"
+    },
+    {
+      "id": "A12",
+      "scenario": "comparison set",
+      "expected": "same group, beds ½–2×, ≤ 5 km (≤ 2 km without beds), nearest first, never itself, none without a point",
+      "verificationType": "unit (tests/views.test.js)"
+    },
+    {
+      "id": "A13",
+      "scenario": "names",
+      "expected": "77 private hospitals read without their licence class; the register name under the heading and in search",
+      "verificationType": "unit (tests/views.test.js)"
+    },
+    {
+      "id": "A14",
+      "scenario": "publication hygiene",
+      "expected": "no address, phone, licence code, raw record, private document link or credential in the tree",
+      "verificationType": "unit (tests/data.test.js, tests/release.test.js)"
+    },
+    {
+      "id": "A15",
+      "scenario": "rendered QA",
+      "expected": "desktop 1440×900 and phone 390×844, light and dark: Aha, facility panel, station, affiliation, no-beds Aha, charts and table without console errors",
+      "verificationType": "rendered (Playwright, handoff/VERIFICATION.md)"
+    }
+  ],
+  "developerWorkflow": [
+    "change the research sheet",
+    "read the tabs again (scripts/export-sheet-tabs.js) and rebuild (DATA_METHOD.md §10)",
+    "npm test",
+    "npm run check:lds -- --lds <base> --li <profile>",
+    "bump the cache tag and versions",
+    "npm run handoff:manifest, push, npm run verify:live"
+  ],
+  "backlog": [
+    {
+      "id": "B1",
+      "item": "Building units round the facility points (OpenStreetMap counts per unit; scripts/build-building-units.py)",
+      "evidence": "planned"
+    },
+    {
+      "id": "B2",
+      "item": "Pins for HCODE records (clinics) from a public, checkable source",
+      "evidence": "planned"
+    },
+    {
+      "id": "B3",
+      "item": "Link the 42 brand/service families of 01_BRANDS to facilities in the sheet, then a family filter",
+      "evidence": "planned"
+    },
+    {
+      "id": "B4",
+      "item": "Review the 160 + 48 production points in another district/province than the registered one",
+      "evidence": "meta.checks"
+    },
+    {
+      "id": "B5",
+      "item": "Demand side: population and healthcare utilisation (landometer.com/citymeter/healthcare) beside supply",
+      "evidence": "planned"
+    }
+  ]
+}

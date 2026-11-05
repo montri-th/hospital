@@ -1,0 +1,625 @@
+{
+  "$schema": "./handoff.schema.json",
+  "schemaVersion": "1.5.0",
+  "productId": "citymeter-hospital",
+  "productVersion": "0.1.0",
+  "updatedOn": "2026-11-05",
+  "documentType": "product-brief",
+  "datasetCheckedOn": "2026-11-01",
+  "language": "th",
+  "productName": "CityMETER · Hospital",
+  "repository": "https://github.com/montri-th/hospital",
+  "liveUrl": "https://montri-th.github.io/hospital/",
+  "productStatement": "PRODUCT_STATEMENT.md",
+  "job": "เตียงสถานพยาบาลกระจุกอยู่ตรงไหน และใกล้รถไฟฟ้าแค่ไหน — แล้วเจาะลงถึงสถานี สถานพยาบาล อาคาร และคู่เทียบ",
+  "audiences": [
+    "ทีมขยายสาขาและพัฒนาธุรกิจของเครือโรงพยาบาลเอกชน",
+    "ทีมพัฒนาโครงการและนักลงทุนอสังหาฯ (โครงการสุขภาพ mixed-use)",
+    "ผู้วางแผนเครือข่ายบริการ (ประกันสุขภาพ TPA สสจ. เขตสุขภาพ)",
+    "ผู้ประเมินมูลค่าและสถาบันการเงิน"
+  ],
+  "journey": [
+    "first Aha (3D city scene, beds)",
+    "switch the measure (เตียง | สถานพยาบาล)",
+    "district → groups, bed bands, affiliations, stations, facilities",
+    "station → facilities within 500 m",
+    "facility → building view, quality, lab prices, services, comparison set",
+    "affiliation filter → its card",
+    "charts and table"
+  ],
+  "changesSince": "0.1.0 (2026-11-05, owner request “… ขอให้ทำแบบเดียวกันให้กับ CityMETER: Hospital แล้ว publish ที่ github.com/montri-th/hospital …”): first release, built on CityMETER · Hotel 0.3.6 (montri-th/hotel@177e592). Carried over: the district-first 3D map, the Aha model, focus + quiet, province frames, the two-point building camera (Hotel 0.3.2), terrain at hilly sites, building units (Hotel 0.3.0, units reused), icon-first copy without caveats (Hotel 0.3.1), the phone dock (Hotel 0.3.5) and Google actions (Hotel 0.3.3). New: beds as the default measure (a reported 0 is 0, unknown counted apart), eight facility groups, affiliation filter and chart view, a no-beds Aha that offers records, HA/JCI chips, the DIT six-item lab basket with its quintile level, services, the NHSO role, a 5 km comparison set (2 km without beds), licence-class names. Removed: chain logos, recorded prices, retail context, resort sites, terrain facts in panels.",
+  "rowScopes": {
+    "scopeRows": "rows after search · group · size · province · affiliation, before any district selection or focus: the comparison base of the Aha, the choropleth, the charts and every rank",
+    "baseRows": "scopeRows narrowed by the selected เขต/อำเภอ",
+    "rows": "baseRows narrowed by the district focus: pins with detail, counters, the table (a building or station panel shows its own rows)"
+  },
+  "firstAha": {
+    "scope": "scopeRows",
+    "measure": "beds (default) | count",
+    "ranking": "เขต/อำเภอ by the measure (then the other measure, then name) inside the home province = the province holding the most of the measure among rows placed at district level; up to three and never every district holding the measure (N ≤ 3 → top N − 1); never cut through a tie; none left → spread",
+    "headlineTemplate": "{share}% ของ{เตียง|สถานพยาบาล}ใน{home} อยู่ใน {n} {เขต|อำเภอ}นี้ (one district: อยู่ใน{เขต|อำเภอ}{name})",
+    "numerator": "Σ measure of the focused districts (matched membership)",
+    "denominator": "Σ measure of every row of the home province in the selection (homeValue)",
+    "personality": "rail: two bars — share of the measure within 500 m (straight line) of an operating CityMETER Transit station among the focus rows with a point vs the rest of the province’s placed rows with a point; both bases in each bar’s title and accessible text; hidden when neither side has any",
+    "secondaryFinding": "district(s) with the most of the measure outside the home province (every district tied); “อันดับ 1 นอก{home}”, “มากกว่าทุก{เขต}ของ{home}” when it exceeds the first focus district; hidden with a province filter and when the top is < 2",
+    "defaultFocus": "auto",
+    "defaultCamera": "city preset, fitPitched over the focused districts",
+    "action": "ดูทุกพื้นที่ (?areas=all); เปรียบเทียบพื้นที่ (opens charts); district names are links",
+    "model": "js/area-insight.js#summarizeAreaInsight",
+    "filter": "js/area-insight.js#filterAreaRows",
+    "defaultSnapshot": {
+      "asOf": "2026-11-01",
+      "builtOn": "2026-11-05",
+      "beds": {
+        "home": "BKK",
+        "areas": [
+          {
+            "id": "1037",
+            "name": "ราชเทวี",
+            "value": 5891
+          },
+          {
+            "id": "1020",
+            "name": "บางกอกน้อย",
+            "value": 2863
+          },
+          {
+            "id": "1007",
+            "name": "ปทุมวัน",
+            "value": 2230
+          }
+        ],
+        "value": 10984,
+        "homePlacedValue": 34030,
+        "homeValue": 34030,
+        "sharePct": 32,
+        "rail": {
+          "m": 500,
+          "focus": {
+            "within": 4198,
+            "base": 10983
+          },
+          "rest": {
+            "within": 8285,
+            "base": 22430
+          }
+        },
+        "outside": {
+          "id": "5001",
+          "name": "เมืองเชียงใหม่",
+          "province": "CMI",
+          "value": 4113
+        }
+      },
+      "records": {
+        "home": "BKK",
+        "areas": [
+          {
+            "id": "1006",
+            "name": "บางกะปิ",
+            "value": 150
+          },
+          {
+            "id": "1030",
+            "name": "จตุจักร",
+            "value": 148
+          }
+        ],
+        "value": 298,
+        "homePlacedValue": 3439,
+        "homeValue": 3439,
+        "sharePct": 9,
+        "rail": {
+          "m": 500,
+          "focus": {
+            "within": 10,
+            "base": 26
+          },
+          "rest": {
+            "within": 97,
+            "base": 336
+          }
+        },
+        "outside": {
+          "id": "9011",
+          "name": "หาดใหญ่",
+          "province": "SKA",
+          "value": 460
+        }
+      },
+      "note": "regression fixtures (tests/insight.test.js), never UI constants"
+    },
+    "fallbacks": {
+      "spread": "every district of the home province holds the same value → spread finding, the camera frames them",
+      "unplaced": "no district can be ranked → the count and a table action",
+      "empty": "no row → clear filters action",
+      "noBeds": "beds measure and a selection whose rows report no beds (primary care, clinics) → its records, “ไม่มีเตียงตามทะเบียน”, and the switch to records (นับเป็นแห่ง)"
+    }
+  },
+  "countingUnitContract": {
+    "default": "beds the HCODE register reports (Σ official_reported_beds_text, เตียง)",
+    "alternatives": [
+      "records (แห่ง)"
+    ],
+    "words": {
+      "beds": "เตียง",
+      "count": "แห่ง"
+    },
+    "rule": "one row = one row of 02_FACILITIES (a source identity the owner approved into scope, operation not revalidated); a reported 0 is 0; unknown beds counted apart, never 0",
+    "switch": "legend radio group, URL ?metric=count"
+  },
+  "metricContract": {
+    "areas": "Σ measure per เขต/อำเภอ (beds → LI li.supply; records → LDS count)",
+    "provinces": "Σ measure per province frame (same family)",
+    "eligibility": "none — totals; ties are never cut (firstAha.ranking)",
+    "combined": "Σ focus ÷ the home province’s whole total in the selection (a share, numerator and denominator shown)",
+    "notDrawn": "no per-area or per-person ratio: reported beds are not a density, a ratio to population or a market measure",
+    "ramp": "all 41 samples of the family LUT by rank among the measured nonzero values being read (js/scales.js#buildRamp; owner standing rule “Color scale ขอให้ใช้ 41 scales ตาม LDS เสมอ”); map, legend, labels, rank bars and the district chart read one ramp; the matrix has its own ramp over its cells"
+  },
+  "coverageContract": {
+    "covered": "every เขต/อำเภอ of the 77 provinces is in the register’s national scope",
+    "states": {
+      "measured": "ramp sample by rank",
+      "measured_zero": "sample 0 + zero outline — no record, or only records reporting 0 beds, under the filters",
+      "no_data": "beds only: the district has records but none with known beds (hatch)",
+      "out_of_scope": "not drawn"
+    },
+    "unplaced": "rows without a district are counted apart (province only, conflict), never shown as 0 — none in this release"
+  },
+  "categoricalCueContract": {
+    "registry": "landometer-series-10-v8",
+    "bindBy": "facility group id (js/cues.js#GROUP_SERIES)",
+    "groups": {
+      "regional": {
+        "series": 1,
+        "th": "โรงพยาบาลศูนย์และทั่วไป"
+      },
+      "private": {
+        "series": 2,
+        "th": "โรงพยาบาลเอกชน"
+      },
+      "community": {
+        "series": 3,
+        "th": "โรงพยาบาลชุมชน"
+      },
+      "public_other": {
+        "series": 4,
+        "th": "โรงพยาบาลรัฐนอกสังกัดสาธารณสุข"
+      },
+      "subdistrict": {
+        "series": 10,
+        "th": "โรงพยาบาลส่งเสริมสุขภาพตำบล"
+      },
+      "center": {
+        "series": 7,
+        "th": "ศูนย์บริการสาธารณสุขและหน่วยปฐมภูมิ"
+      },
+      "clinic": {
+        "series": 8,
+        "th": "คลินิกเอกชน"
+      },
+      "other": {
+        "series": 9,
+        "th": "ไม่ระบุประเภท"
+      }
+    },
+    "noStar": true,
+    "sizeCue": "symbol area ∝ reported beds (radius = k(zoom)·√(beds/100), cap 1,500, floor 3 px for a reported 0; js/model.js#pinRadius); unknown beds = open outline at the 10-bed size; colour stays the group’s; quiet context ≤ 6 px radius"
+  },
+  "framesContract": {
+    "index": "data/area-index.json — 928 districts and 77 provinces, no geometry (codes, names, production areaSqm, label, bbox)",
+    "frames": "data/frames/{CODE}.json — district outlines per province (77 files)",
+    "loading": "the selection’s provinces at once; the provinces under the map at district zoom (≤ 6 per move); never all 77 up front; versioned with the release tag",
+    "failure": "reported and retried on the next request; panels, charts and table never depend on outlines"
+  },
+  "mapFocusContract": {
+    "principle": "detail only for the focused part — the selected district, the station, the facility, the automatic or explicit focus; everything else visible but quiet",
+    "states": {
+      "auto": "default top districts; released when none of them is on screen",
+      "explicit": "?areas=a,b,c",
+      "none": "?areas=all"
+    },
+    "choropleth": "li.supply (beds) or count (records), 41-sample ramp by rank, under the basemap’s first line layer; zoom 8–14.5; the selected จังหวัด from zoom 4; measured_zero = sample 0 + 2 px zero outline; no_data = hatch"
+  },
+  "contextContract": {
+    "rail": {
+      "source": {
+        "source": "CityMETER · Transit (montri-th/transit)",
+        "commit": "5f5232d077be08929d8a3325b7003be492688b09",
+        "file": "data/transit.json",
+        "sha256": "0916636a7c50a8832f25c073a9b667bc440ee74aef41bdfe499e663e1cc0bb18",
+        "release": "transit-data-2026-10-31-r1",
+        "asOf": "2026-10-31",
+        "rule": "operating = on the operator roster of CityMETER · Transit; construction = a project station, not a service; straight-line distance from the facility point to the station reference point, up to 2000 m"
+      },
+      "drawn": "operating stations as quiet rings from zoom 10.5 (names from 13.5), clickable → station panel; the open station’s 500 m radius dashed",
+      "facility": "nearest operating station within 2 km and nearest station under construction (words only)"
+    },
+    "role": {
+      "source": {
+        "source": "CityMETER production Hospital (NHSO service network, open data mastercupuc FY2568 Q3)",
+        "rule": "role_group of the production point: CUP first, else primary, else referral, else ungrouped"
+      },
+      "words": [
+        "หน่วยบริการประจำ / แม่ข่าย",
+        "หน่วยปฐมภูมิ",
+        "หน่วยรับส่งต่อเฉพาะ",
+        "ไม่พบในเครือข่าย สปสช."
+      ]
+    },
+    "distances": "straight lines between reference points — never a walking route, travel time or catchment"
+  },
+  "compsetContract": {
+    "module": "js/profile-model.js#compsetOf",
+    "rule": "same facility group, reported beds ½–2× the facility’s own (both above 0) within 5,000 m straight line; a facility without beds: same group within 2,000 m; nearest first, up to 10, every row of the dataset",
+    "around": "every row with a point within the same radius (any group), with beds and the unknown count: “สถานพยาบาลบนแผนที่รอบ …”",
+    "words": "คู่เทียบ · rule as chips (ประเภท · ½–2× เตียง · ≤ 5 กม.); never คู่แข่ง or a referral network; the limits live behind “วิธีนับ”"
+  },
+  "qualityPriceContract": {
+    "accreditation": "HA stage (normalised from HA_published_status) with issue and expiry dates and the as-of date; JCI programmes with effective dates — chips and source details; never a ranking of quality or outcomes",
+    "price": {
+      "items": [
+        {
+          "id": "CBC_30101_thb",
+          "th": "CBC",
+          "dit": "30101"
+        },
+        {
+          "id": "UA_31001_thb",
+          "th": "ตรวจปัสสาวะ",
+          "dit": "31001"
+        },
+        {
+          "id": "lipid_32004_thb",
+          "th": "ไขมันในเลือด",
+          "dit": "32004"
+        },
+        {
+          "id": "BUN_32201_thb",
+          "th": "BUN",
+          "dit": "32201"
+        },
+        {
+          "id": "creatinine_32202_thb",
+          "th": "ครีเอตินิน",
+          "dit": "32202"
+        },
+        {
+          "id": "glucose_32203_thb",
+          "th": "น้ำตาลในเลือด",
+          "dit": "32203"
+        }
+      ],
+      "levels": [
+        "ต่ำมาก",
+        "ต่ำ",
+        "ปานกลาง",
+        "สูง",
+        "สูงมาก"
+      ],
+      "cutoffs": [
+        1470.0,
+        2026.0,
+        2570.0,
+        3598.69
+      ],
+      "cohort": 262,
+      "checkedOn": [
+        "2026-10-31"
+      ],
+      "shown": "per facility only: the basket sum, a five-step level meter and the six item prices; one DIT item where the basket is incomplete; “วันที่มีผลไม่ระบุในแหล่ง” is a field of the closed source details",
+      "never": "summed or averaged across facilities, called a bill, a package or the facility’s price level"
+    },
+    "services": "domains providers declare, services the NHSO register lists, programme scopes (PDSC, transplant-society membership), named team care — as the sheet records them; long lists fold after eight"
+  },
+  "contextActionsContract": {
+    "module": "js/ask.js#contextActions",
+    "views": [
+      "facility",
+      "building",
+      "area",
+      "station",
+      "overview"
+    ],
+    "ai": "Google Search with a question written for the view (0.3.3: /search?q=, answered at the top by Google’s AI Overview, AI Mode one tab away; never udm=50, which Google stops at “Continue with this search?” from another site)",
+    "maps": "Google Maps search by public names",
+    "streetView": "only with a point (facility point, station reference point “ใกล้สถานี”)",
+    "note": "เปิดใน Google · ผลลัพธ์ไม่ใช่ข้อมูล CityMETER",
+    "dataBoundary": "Google’s answers are Google’s: never copied into the data"
+  },
+  "buildingJoinContract": {
+    "buildings": "focus-tier footprints: OpenStreetMap (pieces of one outline cut by tile edges, building:parts, podium + tower grouped) or, inside a CityMETER unit, CityMETER Building V4 (whole buildings, keys cm:)",
+    "points": "facility points of the scope",
+    "rule": "display-time point-in-footprint (js/building-join.js#joinBuildings)",
+    "click": "one facility → the facility; several → the building panel “สถานพยาบาลในอาคารนี้” (“สูงราว”, the outline source in the title and the provenance line)",
+    "neverChanges": "any count or district membership",
+    "nearest": "0.3.2: a facility whose point falls in no outline is framed on the nearest drawn building (cameraContract.buildingView.target) — never joined, counted or listed in “สถานพยาบาลในอาคารนี้”"
+  },
+  "interactionContract": {
+    "mapClicks": "focus pin → the building being looked at (x-ray: frame again) → focus building → station → province view district / province frame (below zoom 8) → district",
+    "reframe": "every way into a building view frames it again",
+    "quietDots": "never focusable or clickable",
+    "keyboard": "roving tabindex over HTML pins from zoom 15.5; roving tablist for chart views; arrow keys on the measure switch; visible focus everywhere"
+  },
+  "basemapContract": {
+    "generator": "js/map-style.js (no hosted style URL)",
+    "tiles": "https://tiles.openfreemap.org/planet (OpenMapTiles schema)",
+    "palette": "--basemap-* tokens of assets/theme.css; data colours never set there",
+    "water": "light: --basemap-water #CFDDE7 (basemap-only, 1.22:1 from the ground) and the shore line water-shore --basemap-shore #B2C7D6 (1.26:1 from the water), drawn above the district fill and beneath footprints and roads; rivers --basemap-water-line; dark: LDS surface.blueTint #18333E with shore #1F3F4C (owner 2026-11-02 “… ดูเหมือนน้ำมากกว่านี้ … แต่ยัง clean and quiet”)"
+  },
+  "massingContract": {
+    "cityTier": "basemap building extrusions, quiet, faded with distance from the focus; OpenFreeMap features replaced by CityMETER buildings are hidden (one hashed match) and their buildings outside the focus come back in a context layer drawn the same way",
+    "focusTier": "rounded footprints from z14 tiles in the focus regions (≤ 16 tiles nearest the camera; from zoom 12 in 3D when complete, else 13): OpenStreetMap, or CityMETER Building V4 tiles (≤ 40 requests, per อปท. or แขวง) inside CityMETER units",
+    "hostTier": "unused (no host geometry in this product)",
+    "rounding": "roundingRadiusM(zoom) 3–12 m",
+    "enclosure": "encloseOffsetM keeps the rounded shape around the original outline",
+    "buildingSource": "per unit from data/building-units/ (scripts/build-building-units.py): CityMETER Building V4 when its count ≥ 1.15 × the OSM count of the unit (owner 2026-11-01), else OSM; OSM buildings mapped in parts stay inside CityMETER units; a missing CityMETER tile leaves its part on OSM — the units of CityMETER · Hotel 0.3.6 (data/building-units/, units holding a hotel) are reused in this release",
+    "terrain": "fill-extrusions stand on the terrain at their centroid (MapLibre); the building camera fits on the anchor's ground plane and the landed centre's ground; the x-ray solid is lifted the same way"
+  },
+  "cameraContract": {
+    "presets": {
+      "plan": "pitch 0 (3D off)",
+      "city": "pitch 56 · bearing 28 · fov 36.87 (overview)",
+      "model": "pitch 60 · fov 14 (district, facility without a point)",
+      "eye": "pitch 75 · fov 24 (the building view: venue, building, facility with a point)"
+    },
+    "fitting": "fitPitched (overview, district): flat fit, then zoom out until every outline vertex is inside the padded viewport, then in while it still fits; pitch ≤ 90 − fov/2 − 3",
+    "buildingView": {
+      "owner": "2026-10-29 19:47 “อาคารที่เลือก หรือ on focus ให้แสดงด้วยมุมมอง 2-point perspective เสมอ zoom to fit viewport เสมอด้วย”",
+      "module": "js/camera.js#fitBuilding, twoPointBearing, wallAzimuth, occlusionScore, screenBounds (from CityMETER · Shopping centers); js/app.js#frameFocus",
+      "target": "js/app.js#focusTarget — the open building; the building the open facility’s point falls in, else (0.3.2, owner 2026-11-02 “เวลาคลิกที่ poi hotel แล้วต้องแสดง 2-point perspective ของ 3d building mass ทุกกรณีสิ”) the drawn building nearest the facility’s point: js/building-join.js#nearestBuilding — distance from the point to the outline on a local plane, within 300 m (FACILITY_REACH_M), the largest piece within 10 m of the nearest; when nothing is drawn within 300 m the focus tier is loaded once more for 800 m round the point (FACILITY_REACH_FAR_M); legend “อาคารใกล้หมุด”, framed with the point (one zoom step wider, maxZoom 20); a camera choice only, never a join, a count or a located-in claim",
+      "bearing": "dominant wall azimuth + 45°, on the diagonal where the drawn focus buildings (massing.obstaclesNear, 400 m) hide least of it, then the one nearest the current bearing",
+      "fit": "eye preset; shift lens (0.3.2, js/camera.js#lensPadding): padding moves the principal point up to the free box’s centre, never below the canvas centre (pitch + fov/2 < 90 keeps the horizon out), so the camera looks straight at the building at pitch 75 on a phone’s strip above the sheet as on a desktop; fit points = the pieces as the focus tier draws them at building zoom (massing.fitPointsOf → js/massing.js#footprintFitPoints: the offset and fillets of zoom 18, ground and roof), never the shape drawn at the starting zoom (up to 3.6 m wider on every side); every one inside the free box (js/app.js#visibleBox: below the toolbar, above the Aha card, legend, chart tray, table or open phone sheet, left of the zoom control), one side filling 94% of it; maxZoom 21 when the building is known (js/camera.js#BUILDING_MAX_ZOOM — Hotel 0.1: stays stand in shophouses and small buildings; the Shopping centers limit 19.5 left a 40 m building at half the box) / 18 while unknown, minZoom 14",
+      "unknown": "a 90 m box round the point (12 m tall) framed the same way while the buildings load, and where nothing is drawn within 800 m; the camera turns to the building when it arrives, at most three times, never after a user camera move",
+      "plan": "3D off: the same footprint fitted flat (fitPitched plan, maxZoom 21 known / 18 unknown)",
+      "click": "selectHotel (pin, label, list row, search) and selectBuilding switch the map to 3D (js/app.js#ensure3d) before framing; a link keeps view3d=0 when it asks for it",
+      "terrain": "on terrain each fit point carries the ground it is drawn on (4th value: roof at the piece centroid’s ground, base at the lowest ground under its outline, the pin at its own ground); fitBuilding damps its landed rounds (half steps) and js/maplibre-guard.js#guardElevationFreeze lands the centre on the ground after every programmatic ease (MapLibre 5.6.2 leaves map._elevationFreeze on); refitted when the ground changes by ≥ 3 m, a new building arrives or the free box changes once the camera is still (js/app.js#watchFreeBox: legend, trays, phone sheet), at most 3 times, never after a user camera move",
+      "lift": "0.3.2: MapLibre 5.6.2 lifts a camera that would stand inside the terrain (Map#_elevateCameraIfInsideTerrain: lower pitch, other zoom) on every jump; fitBuilding computes with it off (withoutLift) and asks MapLibre’s own check about the camera it found — the alternates (the other corners, opposite first: js/app.js#frameFocus) when that camera would be lifted, else the pitch MapLibre allows; the target carries its pitch and the centre’s elevation (an instant jump checks from the right height)"
+    }
+  },
+  "tileCoverGuard": {
+    "module": "js/maplibre-guard.js#guardRetainedTiles(map, version) → boolean; padOverscaledChildren(idealTileIDs, zoom, maxzoom)",
+    "bug": "MapLibre GL JS 5.6.2 SourceCache._updateRetainedTiles checks the four children of a missing ideal tile whenever the cover zoom + 1 ≤ the source maxzoom; a pitched cover can already hold an ideal tile at the maxzoom, whose children() is ONE overscaled child; when that child is retained, children[1] is undefined and the frame throws “Cannot read properties of undefined (reading 'key')”",
+    "seen": "live 2026-10-29 (Claude desktop browser, real OpenFreeMap tiles): openmaptiles (vector, maxzoom 14), cover zoom 13, camera 13.79–13.95, pitch 75, while the building camera flew between branches; reproduced in the build container by stepping the pitched camera out from 19.5 to 13.6 over a building (7–8 errors on 0.2.0, 0 with the guard)",
+    "fix": "pad the child list of exactly those ideal tiles to four copies of the overscaled child, so the check reads as MapLibre's own overzoom branch; installed on the shared SourceCache prototype at every style load; only for version 5.6.2",
+    "test": "tests/maplibre-guard.test.js",
+    "elevationFreeze": "js/maplibre-guard.js#guardElevationFreeze(map, version), 0.3.2: MapLibre 5.6.2 easeTo/flyTo on terrain without freezeElevation leave map._elevationFreeze on (only a gesture or _finalizeElevation clears it), so the render loop stops clamping the centre to the ground and the framed building drifts (seen 2026-11-02: camera 80.97 m vs ground 62.41 m at Sri Panwa); the guard wraps map._afterEase: when the ease ended (not superseded) and no terrain gesture is running, it clears the freeze and sets the centre elevation to the ground; only for version 5.6.2 (tests/maplibre-guard.test.js)"
+  },
+  "venueXrayContract": {
+    "owner": "2026-10-29 19:47 “เช็คอย่าให้ 3d building mass ตึกอื่นบังอาคารที่กำลังดูอยู่”",
+    "module": "js/venue-xray.js#installVenueXray(map, {beforeId, toMercator, colors}) → {update(features, {colors}), setEnabled, hitTest(point), dispose, count, enabled, failed} (from CityMETER · Shopping centers / Luxury Brands)",
+    "layer": "venue-xray (custom, renderingMode 3d) before place-quarter (js/map-style.js#VENUE_XRAY_BEFORE): drawn over every building and over road names",
+    "input": "the features of the building being looked at (massing.featuresOf(target.refs)) with display_height_m / display_base_m; on terrain the roof is lifted by the ground at the piece centroid (as MapLibre lifts fill-extrusions) and the walls go down to the lowest ground under the outline (0.3.2; a fixed 10 m showed through the slope)",
+    "depth": "scissored depth clear inside the building’s screen box, then its own depth test",
+    "seeThrough": "massing.setScene('eye', rings): the focus buildings standing in front of it turn see-through (SCENE.eye)",
+    "labels": "district label chips never sit on the building (refreshLabelView avoid box); since 0.3.2 neither do the facilities’ name labels (js/labels.js#installFacilityLabels avoid → buildingScreenBox)",
+    "visibility": "3D only, zoom ≥ 13 (XRAY_MIN_ZOOM); empty outside the building view",
+    "colours": "map.activeLayer faces, map.selectedStroke edges — map roles, not data colours",
+    "failSafe": "a GL error disables it (failed = true); the massing highlight keeps drawing",
+    "geojsonMaxzoom": "every GeoJSON source uses maxzoom 24 (js/map-layers.js#GEOJSON_MAXZOOM, the most geojson-vt allows), two levels above BUILDING_MAX_ZOOM: MapLibre 5.6.2 throws in SourceCache._updateRetainedTiles when the near tiles of a pitched cover reach a GeoJSON source maxzoom before they have data (seen in CityMETER · Shopping centers 2026-10-25); under the eye preset the near tiles sit up to about half a level above the camera (tests/release.test.js)"
+  },
+  "breadcrumbContract": {
+    "levels": [
+      "ประเทศไทย",
+      "จังหวัด",
+      "เขต/อำเภอ"
+    ],
+    "productionPath": "/v3/citymeter/{code}/D/{district}?d=hospital",
+    "demoQuery": "?province=BKK&area=1037",
+    "provinceCodes": "production route codes (base info lv0 abbrEn)",
+    "datasetCode": "hospital (production web-v3 dataset-hospital, checked 2026-11-05)"
+  },
+  "provinceContract": {
+    "frames": "data/provinces.geojson",
+    "fill": "the measure below zoom 8 without a province filter",
+    "labels": "ink chips to zoom 9",
+    "unknown": "none in this export"
+  },
+  "pictogramContract": {
+    "file": "assets/icons/material-pictogram-300.woff2",
+    "sha256": "baaf50d8a2adab42cedab20c81a044ded820ee7a1783f9c321cb89d8a5ba6f00",
+    "glyphs": [
+      "area",
+      "province",
+      "segment",
+      "ai",
+      "streetview",
+      "maps",
+      "building",
+      "beds",
+      "rail",
+      "meeting",
+      "compare",
+      "rank",
+      "date",
+      "distance",
+      "construction",
+      "dataset",
+      "elevation",
+      "hospital",
+      "service",
+      "accredit",
+      "lab",
+      "network",
+      "level",
+      "affiliation"
+    ],
+    "rule": "decorative (aria-hidden); the text carries the meaning; no star or medal"
+  },
+  "panel": {
+    "modes": [
+      "overview (+ affiliation card)",
+      "area",
+      "station",
+      "building",
+      "facility"
+    ],
+    "actions": [
+      "select-area",
+      "select-facility",
+      "select-building",
+      "select-station",
+      "select-province",
+      "filter-aff",
+      "filter-group",
+      "set-metric",
+      "back",
+      "explore-top",
+      "clear-focus",
+      "open-charts",
+      "open-table",
+      "clear-filter",
+      "leave-area"
+    ],
+    "models": {
+      "overview": "js/profile-model.js#buildOverview",
+      "area": "buildAreaProfile",
+      "station": "buildStationProfile",
+      "building": "buildBuildingProfile",
+      "facility": "buildFacilityDetail (+ compsetOf)",
+      "affiliation": "buildAffProfile"
+    },
+    "provenance": "exactly one line per view: dataset · source (+ HA · JCI / DIT / สปสช. · เว็บผู้ให้บริการ / Transit when shown) · date · boundary, then “วิธีนับ”",
+    "phoneSheet": "56dvh bottom sheet (0.3.5; was 64dvh), sticky close; in the facility, building, station and area modes the dataset heading is visually hidden (kept for screen readers) and the search form is off — the filter chips facility"
+  },
+  "data": {
+    "file": "data/hospitals.json",
+    "rows": 41828,
+    "counts": {
+      "admin.name": 41828,
+      "basket": 262,
+      "beds.known": 25375,
+      "beds.positive": 1597,
+      "beds.sum": 186453,
+      "ha": 1726,
+      "jci": 23,
+      "level": 905,
+      "points": 12516,
+      "ref": 74,
+      "registry.cancelled": 31,
+      "role": 12516,
+      "rows": 41828,
+      "services": 1409,
+      "src.hcode": 29312,
+      "src.production": 12516,
+      "stations.construction": 81,
+      "stations.operating": 145
+    },
+    "registryId": "research.TH.hospital",
+    "tabs": {
+      "02_FACILITIES": "20a0d51b5188f86340585fe193a7e8542e5b04a12fbe5f75497aa283669be3e9",
+      "99_SOURCE_OBSERVATIONS": "9ce14515684e06077396cf1f83a2ec00c0bf0d83bc8e22208cc79f8ef26f4a0a",
+      "08_ACCREDITATION": "1f916878c1b15f6693d53d3b0010588c0a8c5856a0a5f61a5203e248c8a86652",
+      "11_PRICE_BASKET": "be5aa8234e3672a910c6b74d799ba7b847225a4ca061a233c2a8e6577c7e0007",
+      "13_SERVICE_PROFILE": "34acebb2b67b7411c59b4ee9e9d0d0b3db923b8aa9c5e84e09e62c2fbddf96f4",
+      "15_SERVICE_FRAMEWORK": "1a9ef612b9648e0d59a542a035df7572ed7c67fe4b99b1d565a0d8e24cc469ed",
+      "10_SOURCES": "c49aa8dd2206ada001ff3d778593d46d71442bb94ca8567df5a2f1bfbbfdf31e",
+      "01_BRANDS": "4a68829beefc0bbf7ed7d3cf64863af398b727459ab609b967fd0d537aab89c8",
+      "03_AREA_SUMMARY": "1644ca80d13b76f5c382fddebe5aa0a871a53162c879a95b094cacf7f2e42779",
+      "12_IDENTITY_LINKS": "2a3e310b3daddaa5d3d43e43339a48b8ddb3033d5271986fbd0dcfd54b1eef3f"
+    },
+    "checkedOn": "2026-11-01",
+    "readOn": "2026-11-05",
+    "builtOn": "2026-11-05",
+    "stations": 226,
+    "pointsReceiptsSha256": "27a9194944a97bc001f885eede482f544642baca309b8a977cef635a79d6f5ee",
+    "checks": {
+      "pointDistrictDisagree": 160,
+      "pointProvinceDisagree": 48,
+      "codeNameDisagree": 1
+    },
+    "method": "DATA_METHOD.md",
+    "build": "scripts/build-data.py"
+  },
+  "visualSystem": {
+    "lds": "Landometer-Design-System-v0.9.7.md (standalone-0.9.7-r1, v0.9.7-owner.1, color-srgb-10, sha256 d3085cbc…96)",
+    "locationIntelligence": "Location-Intelligence-Profile-for-LDS-v0.9.7.md (location-intelligence-profile-lds-0.9.7-r1, sha256 5d485604…3c): li.supply (beds)",
+    "parity": "scripts/check-lds-parity.mjs — 124 checks",
+    "themes": "light and dark; analytical HEX identical on both",
+    "fonts": "Bai Jamjuree · IBM Plex Sans Thai Looped · Arvo · JetBrains Mono (assets/lds/build-kit)"
+  },
+  "invariants": [
+    {
+      "id": "H1",
+      "rule": "unknown beds are never 0 (counted apart; district no_data under beds); a reported 0 is a measured 0"
+    },
+    {
+      "id": "H2",
+      "rule": "lab prices are per facility only, “ราคาแล็บ”; never summed or averaged across facilities, never a bill"
+    },
+    {
+      "id": "H3",
+      "rule": "membership is the district matched at build time from the row’s registered district (row.admin); never re-assigned on screen"
+    },
+    {
+      "id": "H4",
+      "rule": "distances are straight lines between reference points; never walking time or catchment"
+    },
+    {
+      "id": "H5",
+      "rule": "the Aha never cuts a tie and never focuses every district holding the measure"
+    },
+    {
+      "id": "H6",
+      "rule": "every panel view ends with exactly one provenance line"
+    },
+    {
+      "id": "H7",
+      "rule": "one symbol = one row with a production point; never clustered; HCODE rows never geocoded"
+    },
+    {
+      "id": "H8",
+      "rule": "accreditation is published evidence, never a quality or outcome ranking; a missing chip is not a failure"
+    },
+    {
+      "id": "H9",
+      "rule": "colours only from assets/theme.css, js/scales.js, js/cues.js; 41 samples by rank; same HEX on both themes"
+    },
+    {
+      "id": "H10",
+      "rule": "no address, licence code, phone, raw record, researcher text, private document link or Landometer commercial term in the repository"
+    },
+    {
+      "id": "H11",
+      "rule": "no brand/service family is inferred from a name; families join by id in the sheet first"
+    }
+  ],
+  "chartContracts": [
+    {
+      "viewKey": "areas",
+      "title": "เขต/อำเภอ",
+      "question": "เขต/อำเภอไหนมีเตียง (หรือสถานพยาบาล) มากที่สุด",
+      "encoding": "bars in the map’s ramp colour, top 20 of every ranked district",
+      "metric": "the current measure",
+      "scope": "scopeRows"
+    },
+    {
+      "viewKey": "mix",
+      "title": "ประเภท",
+      "question": "แต่ละเขต/อำเภอเป็นสถานพยาบาลประเภทใด",
+      "encoding": "top 12 districts × 8 groups, equal cells, own 41-sample ramp, measured zero outlined, unknown-beds cells a dash",
+      "metric": "the current measure",
+      "scope": "scopeRows"
+    },
+    {
+      "viewKey": "aff",
+      "title": "สังกัด",
+      "question": "สังกัดไหนมีเตียง (หรือสถานพยาบาล) มากที่สุด",
+      "encoding": "bars in one neutral foundation fill, the other measure in the label",
+      "metric": "the current measure",
+      "scope": "scopeRows"
+    }
+  ],
+  "delivery": {
+    "site": "GitHub Pages from main /root",
+    "handoff": "dist/CityMETER-Hospital-Developer-Handoff.zip (START_HERE.md, RELEASE_RECEIPT.json, evidence/, source/)",
+    "liveCheck": "npm run verify:live",
+    "cacheTag": "?v=20261105-r1 on every entry file and, through the import map in index.html, on every ES module; the frame files take the same tag from import.meta.url; bump it with package.json version (tests/release.test.js); icon fonts inside the stylesheets carry ?v=<first 8 hex of their SHA-256> (tests/icons.test.js)"
+  },
+  "namesContract": {
+    "shown": "name_th of 02_FACILITIES; a private hospital’s licence class appended by the licence register is left out of the shown name (scripts/build-data.py#display_name, 77 rows)",
+    "register": "nameOff — the register’s full name when it differs, “ชื่อตามทะเบียน” under the heading, in the hover card and lists, searched",
+    "labels": "everyday abbreviations of the type words (รพ. · รพ.สต. · ศบส. · ศสม. · สอ.); a name that is only its type word keeps its full form",
+    "never": "renamed by hand in data/"
+  }
+}

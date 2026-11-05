@@ -1,0 +1,114 @@
+{
+  "family": "LDS Material Symbols Rounded Pictogram",
+  "file": "material-pictogram-300.woff2",
+  "bytes": 3532,
+  "sha256": "baaf50d8a2adab42cedab20c81a044ded820ee7a1783f9c321cb89d8a5ba6f00",
+  "source": "google/material-design-icons variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf",
+  "sourceSha256": "7e74e36533ccee12c2b81e75bfcf3ccf123d3bb7e7e46d65d94445f23db0c97c",
+  "license": "Apache-2.0 (assets/icons/material-symbols-Apache-2.0.txt)",
+  "axes": {
+    "FILL": 0,
+    "wght": 300,
+    "GRAD": 0,
+    "opsz": 24
+  },
+  "glyphs": {
+    "area": {
+      "name": "map",
+      "codepoint": "U+E55B"
+    },
+    "province": {
+      "name": "location_city",
+      "codepoint": "U+E7F1"
+    },
+    "segment": {
+      "name": "category",
+      "codepoint": "U+E72C"
+    },
+    "ai": {
+      "name": "auto_awesome",
+      "codepoint": "U+E65F"
+    },
+    "streetview": {
+      "name": "streetview",
+      "codepoint": "U+E56E"
+    },
+    "maps": {
+      "name": "location_on",
+      "codepoint": "U+E0C8"
+    },
+    "building": {
+      "name": "apartment",
+      "codepoint": "U+EA40"
+    },
+    "beds": {
+      "name": "bed",
+      "codepoint": "U+EFDF"
+    },
+    "rail": {
+      "name": "train",
+      "codepoint": "U+E570"
+    },
+    "meeting": {
+      "name": "groups",
+      "codepoint": "U+F233"
+    },
+    "compare": {
+      "name": "compare_arrows",
+      "codepoint": "U+E915"
+    },
+    "rank": {
+      "name": "leaderboard",
+      "codepoint": "U+F20C"
+    },
+    "date": {
+      "name": "event",
+      "codepoint": "U+E878"
+    },
+    "distance": {
+      "name": "straighten",
+      "codepoint": "U+E41C"
+    },
+    "construction": {
+      "name": "construction",
+      "codepoint": "U+EA3C"
+    },
+    "dataset": {
+      "name": "database",
+      "codepoint": "U+F20E"
+    },
+    "elevation": {
+      "name": "landscape",
+      "codepoint": "U+E564"
+    },
+    "hospital": {
+      "name": "local_hospital",
+      "codepoint": "U+E548"
+    },
+    "service": {
+      "name": "medical_services",
+      "codepoint": "U+F109"
+    },
+    "accredit": {
+      "name": "verified",
+      "codepoint": "U+EF76"
+    },
+    "lab": {
+      "name": "science",
+      "codepoint": "U+EA4B"
+    },
+    "network": {
+      "name": "hub",
+      "codepoint": "U+E9F4"
+    },
+    "level": {
+      "name": "stairs",
+      "codepoint": "U+F1A9"
+    },
+    "affiliation": {
+      "name": "account_balance",
+      "codepoint": "U+E84F"
+    }
+  },
+  "status": "test exception to LDS nav-7 (owner 2026-10-22; actions and building added 2026-10-29; beds, rail, meeting, compare 2026-11-01; rank, date, distance, construction and dataset 2026-11-01 for short copy; hospital, service, accredit, lab, network, level and affiliation 2026-11-05 for CityMETER Hospital); nav-7 subset unchanged"
+}
