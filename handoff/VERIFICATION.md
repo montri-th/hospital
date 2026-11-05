@@ -49,7 +49,22 @@ labels and stations draw). Viewports 1440 × 900 (light, dark) and 390 × 844 (p
 
 ## 5. Live
 
-Recorded after the deploy (section 5 of the release commit that follows the first push).
+- GitHub Pages: `main` / root, enabled 2026-11-05. Byte attestation (`npm run verify:live`) on `a3afc22`: 243 published
+  files, 243 identical (SHA-256), 0 failed; Markdown is served as `text/markdown`, so “วิธีนับ” opens `DATA_METHOD.md`.
+  The documentation commit after it is attested the same way (`evidence/live-attestation.json`, git-ignored).
+- Live walk in Chrome (real OpenFreeMap basemap and CityMETER buildings), dark theme, 1568 × 749: first screen —
+  “32% ของเตียงในกรุงเทพมหานคร อยู่ใน 3 เขตนี้”, ราชเทวี · บางกอกน้อย · ปทุมวัน, rail bars 38% / 37%, names
+  รพ.ศิริราช 1,792 · รพ.พระมงกุฎเกล้า 1,236 · รพ.สงฆ์ 937 near the middle; no console error. A click on the
+  รพ.ศิริราช label → 3D two-point view of its CityMETER Building V4 building (attribution “อาคาร: CityMETER Building
+  V4”, legend “อาคารของสถานพยาบาล”), popup and panel (1,792 เตียง · 500+ · HA ขั้นก้าวหน้า ถึง 25 ก.ย. 2571 ·
+  บางขุนนนท์ 1.4 กม. · ศิริราช 300 ม. กำลังสร้าง); no console error.
+- Phone width on the live site, same-origin 390 × 700 frames: dark first screen (one dock: the Aha line, the measure
+  switch and the ramp); light `?facility=CMH-11699` (Bumrungrad) — its building in the strip above the sheet, the
+  sheet open on the facility.
+
+Seen in the walk, reported (production data, not changed here): CityMETER production groups some large hospitals as
+not found in the NHSO network (e.g. รพ.ศิริราช, รพ.บำรุงราษฎร์) — the role is production's reading of NHSO's open
+mastercupuc file and is shown in production's words.
 
 ## 6. Not verified
 
