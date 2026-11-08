@@ -1,6 +1,6 @@
 {
   "artifact": "CityMETER Hospital — 3D-first, district-first map of the beds the HCODE register reports and of health-facility records across Thailand, with rail context from the same registry, affiliations, published accreditation, DIT lab prices and a comparison set per facility",
-  "productVersion": "0.2.0",
+  "productVersion": "0.2.1",
   "updatedOn": "2026-11-05",
   "ldsVersion": "0.9.7",
   "release": "v0.9.7-owner.1",
@@ -58,16 +58,16 @@
     "mobilePortrait": "full map, five toolbar buttons in one row (วิธีใช้ and Product statement at the top of the sheet); one compact dock at the foot of the map — the Aha finding in two lines with its action, over one legend row (measure switch เตียง | สถานพยาบาล, level + zero swatch over the 41-sample ramp) — above the attribution while it is open, dropped to the tray once it folds (Hotel 0.3.5); zoom buttons off on touch phones; bottom sheet 56% of the screen with a sticky close, opening on the facility, building, station or area"
   },
   "mapContract": {
-    "basemap": "generated at runtime by js/map-style.js on https://tiles.openfreemap.org/planet with --basemap-* tokens",
+    "basemap": "generated at runtime by js/shell/map-style.js on https://tiles.openfreemap.org/planet with --basemap-* tokens",
     "choropleth": "li.supply (beds) or count (records), all 41 samples by rank over the measured nonzero values; beneath the basemap’s first line layer; zoom 8–14.5 (8–12.5 in terrain mode, hard switch), the selected จังหวัด from zoom 4; EVID-05 measured / measured_zero (sample 0 + 2 px zero outline) / no_data (beds unknown: hatch)",
     "provinces": "the same measure per province frame below zoom 8 without a จังหวัด filter, outlines to zoom 12, ink-chip labels to zoom 9, panel list",
     "symbols": "focus rows with a production point as cue icons whose area grows with the reported beds (a reported 0 at the 3 px floor, hollow = unknown); context rows as grey circles by beds, ≤ 6 px radius; HTML pins from zoom 15.5; the pin label is facility name · beds; stations of CityMETER Transit as quiet clickable rings from zoom 10.5, names from 13.5",
     "buildings": "per อปท. (Bangkok: เขต): CityMETER Building V4 where it holds ≥ 1.15 × the OSM buildings of the unit, else OSM (data/building-units/ of CityMETER · Hotel 0.3.6); OSM buildings mapped in parts kept; the attribution names CityMETER Building V4 while drawn",
-    "buildingView": "eye preset corner-on to the building on the least-occluded diagonal, zoom to fit the free part of the map on every way in (js/camera.js#fitBuilding); a station frames its 500 m radius. Hotel 0.3.2 rule (owner 2026-11-02 “… ต้องแสดง 2-point perspective ของ 3d building mass ทุกกรณี”): every facility with a point opens it — the building its pin falls in, else the drawn building nearest the pin within 300 m (800 m after one widen) with the pin in the frame (legend “อาคารใกล้หมุด”); choosing a facility or a building switches the map to 3D",
+    "buildingView": "eye preset corner-on to the building on the least-occluded diagonal, zoom to fit the free part of the map on every way in (js/shell/camera.js#fitBuilding); a station frames its 500 m radius. Hotel 0.3.2 rule (owner 2026-11-02 “… ต้องแสดง 2-point perspective ของ 3d building mass ทุกกรณี”): every facility with a point opens it — the building its pin falls in, else the drawn building nearest the pin within 300 m (800 m after one widen) with the pin in the frame (legend “อาคารใกล้หมุด”); choosing a facility or a building switches the map to 3D",
     "breadcrumb": "ประเทศไทย › จังหวัด › เขต/อำเภอ with production codes and /D/ deep links, ?d=hospital",
     "symbolSize": "area ∝ reported beds (js/model.js#pinRadius), floor 3 px for a reported 0, hollow = unknown beds, quiet context ≤ 6 px radius",
     "labels": "from zoom 12.5: ≤ 9 (phone 5) labels in the central ellipse ranked by the beds percentile + published accreditation; text only — group cue, short name (รพ. · รพ.สต. · ศบส.), bed pictogram + beds; hover card of icon chips (type, beds, affiliation, level, accreditation) (js/labels.js)",
-    "terrain": "terrain mode at hilly sites (zoom ≥ 12.5, 3D, relief ≥ 30 m in view) and round a building or facility being looked at: 3D ground × 1.5 + hillshade in basemap tones; the district fill switches off at 12.5; buildings, the x-ray and the building camera stand on the drawn ground (js/terrain.js, js/camera.js); no terrain facts in the panels",
+    "terrain": "terrain mode at hilly sites (zoom ≥ 12.5, 3D, relief ≥ 30 m in view) and round a building or facility being looked at: 3D ground × 1.5 + hillshade in basemap tones; the district fill switches off at 12.5; buildings, the x-ray and the building camera stand on the drawn ground (js/shell/terrain.js, js/shell/camera.js); no terrain facts in the panels",
     "iconFirstText": "district chips carry the measure pictogram (bed = เตียง, hospital = แห่ง), the status is a pin + number, legend items are a symbol + 1–2 words; sentences live in titles and accessible names",
     "water": "light water --basemap-water #CFDDE7 (basemap-only, 1.22:1 from the ground) with the water-shore line --basemap-shore #B2C7D6 above the district fill; dark keeps surface.blueTint #18333E (0.3.4, owner “ใน light theme ทำให้ทะเล/water body ดูเหมือนน้ำมากกว่านี้ … แต่ยัง clean and quiet”); the coast line, district outlines and legend separate the sea from low li.supply classes, never the water hue alone"
   },

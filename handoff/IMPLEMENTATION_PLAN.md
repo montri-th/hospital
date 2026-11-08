@@ -4,15 +4,15 @@
 
 ## สถาปัตยกรรม
 
-Static site บน GitHub Pages: ES modules ผ่าน import map (cache tag เดียวทุกโมดูล) ไม่มี build step ของหน้าเว็บ · MapLibre GL JS 5.6.2 (unpkg, pinned) + `js/maplibre-guard.js` · basemap สร้างเองบน OpenFreeMap · กราฟเป็น HTML ไม่มีไลบรารี · ข้อมูล `data/hospitals.json` (columnar) สร้างด้วย Python จากแท็บของชีตวิจัย + production base info + จุดของชุด Hospital ใน production + CityMETER · Transit
+Static site บน GitHub Pages: ES modules ผ่าน import map (cache tag เดียวทุกโมดูล) ไม่มี build step ของหน้าเว็บ · MapLibre GL JS 5.6.2 (unpkg, pinned) + `js/shell/maplibre-guard.js` · basemap สร้างเองบน OpenFreeMap · กราฟเป็น HTML ไม่มีไลบรารี · ข้อมูล `data/hospitals.json` (columnar) สร้างด้วย Python จากแท็บของชีตวิจัย + production base info + จุดของชุด Hospital ใน production + CityMETER · Transit
 
 | ชั้น | โมดูล |
 |---|---|
 | ข้อมูลและมาตรวัด | `js/model.js` (decode, `METRICS`, `rowValue`, `pinRadius`, `shortName`) · `js/areas.js` · `js/area-insight.js` |
 | มุมมองแผง | `js/profile-model.js` (overview, area, station, building, facility, affiliation, `compsetOf`) · `js/panel.js` · `js/ask.js` · `js/breadcrumb.js` |
 | กราฟและตาราง | `js/chart-model.js` · `js/charts.js` · ตารางใน `js/app.js` |
-| แผนที่ | `js/app.js` (orchestration) · `js/map-style.js` · `js/map-layers.js` · `js/provinces.js` · `js/frames.js` · `js/pins.js` · `js/labels.js` · `js/stations.js` · `js/scales.js` · `js/cues.js` |
-| อาคารและกล้อง | `js/massing.js` · `js/building-units.js` · `js/building-join.js` · `js/venue-xray.js` · `js/camera.js` · `js/terrain.js` · `js/maplibre-guard.js` |
+| แผนที่ | `js/app.js` (orchestration) · `js/shell/map-style.js` · `js/map-layers.js` · `js/provinces.js` · `js/frames.js` · `js/pins.js` · `js/labels.js` · `js/stations.js` · `js/scales.js` · `js/cues.js` |
+| อาคารและกล้อง | `js/massing.js` · `js/shell/building-units.js` · `js/shell/building-join.js` · `js/shell/venue-xray.js` · `js/shell/camera.js` · `js/shell/terrain.js` · `js/shell/maplibre-guard.js` |
 | สคริปต์ | `scripts/export-sheet-tabs.js` · `fetch-base.py` · `fetch-points.py` · `build-receipts.py` · `build-data.py` · `build-pictogram-font.py` · `build-building-units.py` · `check-lds-parity.mjs` · `build-handoff.mjs` · `verify-live.mjs` |
 
 ## งาน (ทั้งหมดเสร็จในรุ่นนี้)
