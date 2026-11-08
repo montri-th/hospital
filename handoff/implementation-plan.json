@@ -2,7 +2,7 @@
   "$schema": "./handoff.schema.json",
   "schemaVersion": "1.5.0",
   "productId": "citymeter-hospital",
-  "productVersion": "0.2.1",
+  "productVersion": "0.3.0",
   "updatedOn": "2026-11-05",
   "documentType": "implementation-plan",
   "architecture": {
@@ -54,7 +54,7 @@
       "js/shell/geometry.js": "",
       "js/navigation.js": "",
       "js/shell/vendors.js": "",
-      "js/launch.js": "",
+      "js/shell/launch.js": "",
       "js/labels.js": "names near the middle of the view (importance = beds percentile + published accreditation), short names (รพ. · รพ.สต. · ศบส.), hover card of icon chips",
       "js/shell/terrain.js": "terrain mode at hilly sites and round a building or facility being looked at (site relief), changes only while the camera is still",
       "js/shell/building-units.js": "buildings per area: the per-province unit files (data/building-units/), CityMETER zones, production tile URLs and the attribution"
@@ -228,7 +228,7 @@
       "files": [
         "index.html",
         "styles.css",
-        "js/launch.js",
+        "js/shell/launch.js",
         "site.webmanifest",
         "llms.txt"
       ],
