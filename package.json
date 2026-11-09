@@ -1,6 +1,6 @@
 {
   "name": "citymeter-hospital",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "type": "module",
   "description": "CityMETER · Hospital — district-first 3D map of the beds the HCODE register reports and of health-facility records across Thailand, with rail context from the same registry, affiliations, published accreditation, DIT lab prices and a comparison set per facility",
