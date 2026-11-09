@@ -541,7 +541,7 @@ export default {
     }],
     [re(`อันดับ ${N} (.+?): ${N} ${U} ${N} ${U} กดเพื่อดูพื้นที่นี้`), (m, t) => `No. ${m[1]} ${place(t, m[2])}: ${unitOf(t, m[3], m[4])}, ${unitOf(t, m[5], m[6])}, select to view this area`],
     [re(`อันดับ ${N} (.+?): ${N} ${U} ${N} ${U} กดเพื่อดูเฉพาะสังกัดนี้`), (m, t) => `No. ${m[1]} ${t.part(m[2]) ?? m[2]}: ${unitOf(t, m[3], m[4])}, ${unitOf(t, m[5], m[6])}, select to show only this affiliation`],
-    [re(`(สถานี.+) ${N} ${U}`), (m, t) => `${t.name(m[1])}, ${unitOf(t, m[2], m[3])}`],
+    [re(`(สถานี[^·—]+) ${N} ${U}`), (m, t) => `${t.name(m[1])}, ${unitOf(t, m[2], m[3])}`],
     [re(`(.+) ${N} ${U} กดเพื่อดูจังหวัด`), (m, t) => { const p = t.known(m[1]); return p ? `${p}, ${unitOf(t, m[2], m[3])}, select to view the province` : null; }],
     [re('(เขต|อำเภอ|เขต\\/อำเภอ|จังหวัด)ที่มี(เตียง|สถานพยาบาล)มากที่สุด(?:ใน(.+))?'), (m, t) => {
       const what = m[1] === 'จังหวัด' ? 'Provinces' : 'Districts';
