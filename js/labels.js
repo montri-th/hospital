@@ -15,6 +15,7 @@
  */
 import {cueMarkup} from './cues.js';
 import {subName, OFFICIAL_NAME, shortName as abbreviate} from './model.js';
+import {LANG} from './shell/i18n.js';
 
 export const LABEL_MIN_ZOOM = 12.5;
 export const LABEL_MAX = Object.freeze({desktop: 9, phone: 5});
@@ -114,7 +115,7 @@ export function installFacilityLabels(map, container, {onSelect, bounds, avoid =
     const beds = Number.isFinite(row.beds) ? `${num(row.beds)} เตียง` : 'ไม่ทราบจำนวนเตียง';
     el.setAttribute('aria-label', [row.name, groupName(row), beds].filter(Boolean).join(' · '));
     const parts = labelParts(row);
-    el.innerHTML = `<span class="hl-cue" aria-hidden="true">${cueMarkup(row.series)}</span><span class="hl-text"><span class="hl-name">${esc(parts.name)}</span></span>${parts.beds ? `<span class="hl-beds data-number"><i class="pictogram pic-beds" aria-hidden="true"></i>${esc(num(parts.beds))}</span>` : ''}`;
+    el.innerHTML = `<span class="hl-cue" aria-hidden="true">${cueMarkup(row.series)}</span><span class="hl-text"><span class="hl-name"${LANG === 'en' ? ' lang="th" translate="no"' : ''}>${esc(parts.name)}</span></span>${parts.beds ? `<span class="hl-beds data-number"><i class="pictogram pic-beds" aria-hidden="true"></i>${esc(num(parts.beds))}</span>` : ''}`;
     el.onclick = () => onSelect?.(row);
     el.onmouseenter = () => { if (finePointer()) showCard(row, el); };
     el.onmouseleave = () => hideCard(row);
