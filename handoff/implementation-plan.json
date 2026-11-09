@@ -2,7 +2,7 @@
   "$schema": "./handoff.schema.json",
   "schemaVersion": "1.5.0",
   "productId": "citymeter-hospital",
-  "productVersion": "0.3.4",
+  "productVersion": "0.3.5",
   "updatedOn": "2026-11-05",
   "documentType": "implementation-plan",
   "architecture": {
