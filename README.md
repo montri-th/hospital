@@ -55,4 +55,4 @@ npm run verify:live                                            # ไฟล์บ
 
 ## สิทธิ์และที่มา
 
-แผนที่ © OpenStreetMap contributors ผ่าน OpenFreeMap / OpenMapTiles · ขอบเขตปกครองและอาคาร CityMETER (Building V4 ในพื้นที่ที่ใช้) · ภูมิประเทศ SRTM ผ่าน Terrain Tiles on AWS · ไอคอน Material Symbols (Apache-2.0) · ข้อมูลสถานพยาบาลตามแหล่งที่ระบุในแต่ละรายการ (CityMETER production, ทะเบียน HCODE กระทรวงสาธารณสุข, HA, JCI, กรมการค้าภายใน, สปสช.) — ชุดข้อมูลนี้เป็นงานวิจัย ไม่ใช่สำมะโนสถานพยาบาลที่เปิดให้บริการ
+แผนที่ © OpenStreetMap contributors ผ่าน OpenFreeMap / OpenMapTiles · ขอบเขตปกครองและอาคาร CityMETER (Building V4 ในพื้นที่ที่ใช้) · ชื่ออังกฤษของเขต/อำเภอ OpenGISData-Thailand (CC BY 4.0, อ้าง DOPA) · ภูมิประเทศ SRTM ผ่าน Terrain Tiles on AWS · ไอคอน Material Symbols (Apache-2.0) · ข้อมูลสถานพยาบาลตามแหล่งที่ระบุในแต่ละรายการ (CityMETER production, ทะเบียน HCODE กระทรวงสาธารณสุข, HA, JCI, กรมการค้าภายใน, สปสช.) — ชุดข้อมูลนี้เป็นงานวิจัย ไม่ใช่สำมะโนสถานพยาบาลที่เปิดให้บริการ
