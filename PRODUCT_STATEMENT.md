@@ -6,7 +6,7 @@ Winning strategy ของชุดข้อมูลนี้ เขียน�
 
 | รายการ | รายละเอียด |
 |---|---|
-| Parent product | CityMETER (City Intelligence Base Layer ของ Landometer) · กลุ่ม Location (ทะเบียนกลาง `research.TH.hospital` / Location · TH) · production dataset code `hospital` (`https://landometer.com/v3/citymeter?d=hospital`) |
+| Parent product | CityMETER (City Intelligence Base Layer ของ Landometer) · กลุ่ม Living (ทะเบียนกลาง `research.TH.hospital` / Living · TH; เจ้าของย้ายจาก Location เมื่อ 12 พ.ย. 2569) · production dataset code `hospital` (`https://landometer.com/v3/citymeter?d=hospital`) |
 | Feature / dataset | Hospital — โรงพยาบาลและหน่วยบริการสุขภาพทั่วประเทศไทย ระดับเขต/อำเภอ: เตียงตามทะเบียน ประเภท สังกัด ระดับ มาตรฐานที่เผยแพร่ ราคาแล็บ บริการ บริบทรถไฟฟ้า และคู่เทียบรายแห่ง |
 | รุ่นเอกสาร | 0.1.0 · 5 พฤศจิกายน 2569 |
 | สถานะ | Public demo รุ่น 0.1.0 บน GitHub Pages (`https://montri-th.github.io/hospital/`); ชุดข้อมูลเป็น research master ไม่ใช่สำมะโนสถานพยาบาลที่เปิดให้บริการ |

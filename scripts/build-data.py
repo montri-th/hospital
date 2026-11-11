@@ -585,7 +585,7 @@ def main():
     checked = sorted({iso(r['checked_on']) for r in sources_tab if iso(r['checked_on'])})
     meta = {
         'dataset': 'CityMETER Hospital', 'datasetTh': 'โรงพยาบาลและหน่วยบริการสุขภาพในประเทศไทย', 'registryId': 'research.TH.hospital',
-        'registryRole': 'Location · TH', 'productDataset': 'hospital', 'sheetTitle': SHEET_TITLE, 'sheetStatus': 'research_master',
+        'registryRole': 'Living · TH', 'productDataset': 'hospital', 'sheetTitle': SHEET_TITLE, 'sheetStatus': 'research_master',
         'sheetModified': a.sheet_modified, 'readOn': a.read_on,
         'readMethod': "the sheet's HTML view read cell by cell in the owner's browser (scripts/export-sheet-tabs.js); SHA-256 of each tab's rows as canonical JSON",
         'tabs': tab_shas,
