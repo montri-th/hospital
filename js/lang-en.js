@@ -176,6 +176,7 @@ export default {
     'ไม่ระบุ': 'Not stated',
     // Filters
     'ค้นหาสถานพยาบาล รหัส หรือพื้นที่': 'Search facilities, codes or areas',
+    'ลองชื่อสถานพยาบาล รหัส สังกัด สถานี เขต/อำเภอ หรือจังหวัด': 'Try the name of a facility, a code, an affiliation, a station, a district or a province',
     'ค้นหาสถานพยาบาล รหัส สังกัด หรือพื้นที่': 'Search facilities, codes, affiliations or areas',
     'ค้นหาชื่อสถานพยาบาล รหัส ประเภท สังกัด เขต/อำเภอ หรือจังหวัด': 'Search facility names, codes, types, affiliations, districts or provinces',
     'ตัวกรอง': 'Filters',
@@ -450,6 +451,8 @@ export default {
     'ประเทศไทย': 'Thailand',
   },
   contexts: [
+    // The line under a name in the search list (js/find.js#searchNote): one entry, so the singular.
+    ['.find-where', {'สถานีรถไฟฟ้า': 'Rail station', 'สังกัด': 'Affiliation', 'ประเภทสถานพยาบาล': 'Facility type', 'จังหวัด': 'Province'}],
     // A unit after a bold number (js/panel.js valueText, nw(…)): "1 bed", "12,345 beds".
     ['.nowrap', {'เตียง': (el, t) => t.plural(el.querySelector('strong')?.textContent, 'bed', 'beds'),
       'แห่ง': (el, t) => t.plural(el.querySelector('strong')?.textContent, 'facility', 'facilities')}],
