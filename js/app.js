@@ -47,6 +47,7 @@
  * entry per level (the back button goes up a level).
  */
 import {registerDataNames} from './lang.js';
+import {LANG as PAGE_LANG, translate as translateText} from './shell/i18n.js';
 import {provinces as provinceList, provinceByCode, provinceCodeFrom, setProvinces, decodeDataset, filterRows, summarize, hasPoint, unitWords, rowValue, SIZE_BANDS, pinRadius, PIN_MIN_RADIUS} from './model.js';
 import {buildAreaIndex, areaWord, areaLocator, recordBounds} from './areas.js';
 import {summarizeAreaInsight, filterAreaRows} from './area-insight.js';
@@ -1918,7 +1919,8 @@ function installFinder() {
     state.finder = installSearch({
       input: $('search'),
       index: createIndex({kinds: SEARCH_KINDS, heads: SEARCH_HEADS}),
-      entries: () => searchEntries({data: state.data, index: state.index}),
+      // On an English page the words of the page's own vocabulary (สังกัด) are found by their English too.
+      entries: () => searchEntries({data: state.data, index: state.index, en: PAGE_LANG === 'en' ? translateText : null}),
       note: entry => searchNote(entry, {index: state.index, data: state.data}),
       // What the reader is looking at comes first among equal names.
       scope: () => ({province: $('province').value || areaById(state.selectedArea)?.province || '', area: state.selectedArea || ''}),
