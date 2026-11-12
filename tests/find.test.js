@@ -97,3 +97,17 @@ test('the list says what an entry is and where, and the page opens every kind it
   const part = {matches: selector => selector === '.find-where'};
   assert.deepEqual(["สถานีรถไฟฟ้า", "สังกัด", "ประเภทสถานพยาบาล", "จังหวัด"].map(th => translateIn(part, th)), ["Rail station", "Affiliation", "Facility type", "Province"]);
 });
+
+test('on an English page a word of the page\'s own vocabulary is found by the English the page shows for it', () => {
+  // The data keeps these words in Thai; js/app.js gives the list the page's dictionary on an English page only.
+  registerDictionary(HOSPITAL_EN);
+  const loaded = load();
+  const words = [...searchEntries({...loaded, en: translate})].filter(e => ['aff'].includes(e.kind));
+  assert.ok(words.length > 0 && words.every(e => e.nameEn && !/\p{Script=Thai}/u.test(e.nameEn)), 'every such word has its English');
+  assert.ok([...searchEntries(loaded)].filter(e => ['aff'].includes(e.kind)).every(e => !e.nameEn), 'a Thai page adds none');
+  const idx = createIndex({kinds: SEARCH_KINDS, heads: SEARCH_HEADS});
+  idx.addAll(words);
+  const found = typed => { const i = idx.search(typed).items[0]; return i ? [i.entry.kind, i.entry.nameEn] : []; };
+  assert.deepEqual(found('private'), ['aff', 'Private']);
+  assert.deepEqual(found('ministry of public health'), ['aff', 'Ministry of Public Health']);
+});
