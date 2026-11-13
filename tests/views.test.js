@@ -262,7 +262,10 @@ test('a facility with a campus site (0.5.2) reads “ทั้งโรงพย
   assert.match(t, /จาก [^]*ไซต์ กรอบ OpenStreetMap \(ตรวจอัตโนมัติ\) 13 พ\.ย\. 2569/, 'the provenance names the site source and date');
   // The data's own check date stays the research master's: a site never re-dates the facility records.
   assert.ok(t.includes(`ตรวจ ${thaiDate(data.meta.checkedOn)}`), 'the provenance date is the research master’s check');
-  const plain = text(renderFacility(detail(base), ctx));
+  const plain = text(renderFacility(detail({...base, site: null}), ctx));
   assert.ok(!/ทั้ง(โรงพยาบาล|โครงการ) \d/.test(plain) && !/(?:^|\s)ไซต์ (?:\d|กรอบ|รูปแปลง|ผัง|งานวิจัย)/.test(plain),
     'a facility without a site carries no site words (“เว็บไซต์” of its services is not one)');
+  // The published site of the same facility (data/hospitals.json siteGroups) reads the same way, with its own count.
+  assert.ok(base.site?.n >= 2, 'the fixture facility has a published site');
+  assert.ok(text(renderFacility(detail(base), ctx)).includes(`ทั้งโรงพยาบาล ${base.site.n} อาคาร`));
 });

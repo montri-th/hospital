@@ -43,12 +43,31 @@
   "role": 12516,
   "rows": 41828,
   "services": 1409,
+  "site.buildings": 10735,
+  "site.groups": 353,
+  "site.noBuildings": 0,
+  "site.rowsRead": 353,
+  "site.unmatched": 0,
   "src.hcode": 29312,
   "src.production": 12516,
   "stations.construction": 81,
   "stations.operating": 145
  },
  "rows": 41828,
+ "siteGroups": {
+  "buildings": 10735,
+  "bySource": {
+   "osm_polygon_auto": 353
+  },
+  "checkedOn": [
+   "2026-11-13"
+  ],
+  "file": {
+   "bytes": 1187359,
+   "sha256": "7f318a67491f5cd7d43c0991bc0d5c6b464d1cf44a4b04bd2b75d5edd7570bb7"
+  },
+  "rows": 353
+ },
  "stations": 226,
  "tabs": {
   "01_BRANDS": 42,

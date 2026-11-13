@@ -10,6 +10,7 @@ What one figure means:
 - lab prices = DIT published prices of six lab items and their sum, checked 2026-10-31, effective date not shown by the source; the level (ต่ำมาก…สูงมาก) ranks the sum among the 262 facilities with all six. Per facility only; never a bill, a package or the facility's price level.
 - NHSO role = production's grouping of the open NHSO service-network register (mastercupuc FY2568 Q3): CUP · primary · referral-only · not found.
 - distances = straight lines between reference points, not walking routes, travel times or catchments.
+- sites (0.5.2) = the drawn buildings inside a hospital's own OpenStreetMap area, checked automatically by rule (49_SITE_BOUNDARY_CHECK, checked 2026-11-13 from OSM data to 2026-11-12: 353 hospitals, 10,735 buildings; © OpenStreetMap contributors, ODbL 1.0), published as one interior point per building (data.siteGroups); opening the hospital shows and frames them all (“ทั้งโรงพยาบาล N อาคาร”). A site groups buildings for the map; it is not a land boundary, an area of land or ownership, and the area itself is not published.
 - districts = CityMETER production districts (codes as in https://landometer.com/v3/citymeter/{province}/D/{district}?d=hospital), matched from each record's registered district.
 
 Snapshot (release 0.1.0; fixtures, recompute from data):
@@ -36,4 +37,4 @@ Map reading: symbol area grows with the reported beds (a reported 0 is the small
 
 Ask Google: every view links to a Google Search for the question of the view (opening hours, specialists, accepted rights and insurance, getting there). Google's answers are not CityMETER data and are never copied into it.
 
-Do not claim from this data: occupancy, staffed beds, patient volumes, revenue, market share, quality rankings or outcomes, that a facility is open today, current prices or bills, walking time, catchments, that a facility without an accreditation chip failed accreditation, that a district without beds has no health services, or that a building height is measured (CityMETER heights are model estimates).
+Do not claim from this data: occupancy, staffed beds, patient volumes, revenue, market share, quality rankings or outcomes, that a facility is open today, current prices or bills, walking time, catchments, that a facility without an accreditation chip failed accreditation, that a district without beds has no health services, that a building height is measured (CityMETER heights are model estimates), or a land boundary, land area or ownership from a site.

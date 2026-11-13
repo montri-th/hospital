@@ -2,7 +2,7 @@
 → data/hospitals.json `siteGroups` + `meta.siteGroups`. Shared by scripts/build-data.py (--sites) and scripts/apply-sites.py.
 
 Owner 2026-11-13 09:27, VERBATIM: “ช่วยเช็ค demo ของ hospital แล้ว ทำ campus boundary ให้ครอบคลุมทุกอาคารของแต่ละ รพ ที่เป็น
-กลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel แล้ว publish ใหม่” — as CityMETER · Hotel's stay sites (Hotel 0.3.6–0.3.10):
+กลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel / แล้ว publish ใหม่” — as CityMETER · Hotel's stay sites (Hotel 0.3.6–0.3.10):
 a facility of several buildings whose row is `checked` publishes its buildings — `buildings_in_boundary`, the interior points
 of the drawn buildings (CityMETER Building V4 or OpenStreetMap) inside the research site boundary, as "lon,lat;lon,lat" —
 so the map can show them as one site (siteGroups[row] = {pts, n, on, src, url}). The boundary itself, the notes, the main
@@ -19,7 +19,8 @@ import sys
 
 SITE_TAB = '49_SITE_BOUNDARY_CHECK'
 SITE_STATUS = ('checked',)
-SITE_MAX_M = 600  # a site building this far from the facility's own point is a sheet error, not a site
+SITE_MAX_M = 1100  # a site building this far from the facility's own point is a sheet error, not a site (Hotel: 600 m;
+# a hospital campus is wider — 15 of the 426 OSM areas of 2026-11-13 reach 580–1,072 m from the pin)
 SITE_SOURCES = {  # boundary_source codes of 49_SITE_BOUNDARY_CHECK → the words the provenance line uses
     # owner 2026-11-13 “ในลักษณะเดียวกับที่เราทำแล้วกับ hotel”: Hotel's automatic source — an OSM area of the facility's own
     # checked by rule, no layout yet

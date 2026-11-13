@@ -2,7 +2,7 @@
   "$schema": "./handoff.schema.json",
   "schemaVersion": "1.5.0",
   "productId": "citymeter-hospital",
-  "productVersion": "0.5.1",
+  "productVersion": "0.5.2",
   "updatedOn": "2026-11-05",
   "documentType": "product-brief",
   "datasetCheckedOn": "2026-11-01",
@@ -335,6 +335,14 @@
     "neverChanges": "any count or district membership",
     "nearest": "0.3.2: a facility whose point falls in no outline is framed on the nearest drawn building (cameraContract.buildingView.target) — never joined, counted or listed in “สถานพยาบาลในอาคารนี้”"
   },
+  "siteContract": {
+    "release": "0.5.2 (owner 2026-11-13 09:27 “ช่วยเช็ค demo ของ hospital แล้ว ทำ campus boundary ให้ครอบคลุมทุกอาคารของแต่ละ รพ ที่เป็นกลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel / แล้ว publish ใหม่”), as CityMETER · Hotel's stay sites (0.3.6–0.3.10)",
+    "data": "data.siteGroups[row] = {pts, n, on, src, url}: one interior point per drawn building of the site (CityMETER Building V4 inside CityMETER units, OpenStreetMap buildings elsewhere), the count, the check date, the boundary_source code and the OSM element as the reference page (urls); meta.siteGroups: tab, rows, buildings, checkedOn, bySource, sources, credits, file {sha256, bytes} of the CSV read back, rule, maxM 1100",
+    "source": "the checked rows of 49_SITE_BOUNDARY_CHECK in the research master (scripts/sites.py; scripts/apply-sites.py --sites or scripts/build-data.py --sites); 0.5.2: 353 rows, 10,735 buildings, all osm_polygon_auto (an OpenStreetMap area of the hospital's own, checked by rule, OSM data to 2026-11-12 21:23 UTC)",
+    "map": "js/app.js#focusTarget — for a facility with a site, every drawn building whose outline holds one of the points, highlighted, x-rayed and framed together with the pin (js/shell/building-join.js#buildingsAtPoints); a point no outline holds is left out; the massing square round the pin grows to hold the site (siteReach)",
+    "panel": "chip “ทั้งโรงพยาบาล N อาคาร” (“Whole hospital: N buildings”); source details row “ไซต์” (N อาคาร · source · หน้าอ้างอิง · © OpenStreetMap contributors · date); provenance “ไซต์ กรอบ OpenStreetMap (ตรวจอัตโนมัติ) <date>”",
+    "never": "the boundary, notes, main-building note and checker (meta.excludedFields); a land boundary, land area or ownership; re-dating the facility records (meta.checkedOn stays the research master's); a site for an area that holds another hospital's pin"
+  },
   "interactionContract": {
     "mapClicks": "focus pin → the building being looked at (x-ray: frame again) → focus building → station → province view district / province frame (below zoom 8) → district",
     "reframe": "every way into a building view frames it again",
@@ -614,7 +622,7 @@
     "site": "GitHub Pages from main /root",
     "handoff": "dist/CityMETER-Hospital-Developer-Handoff.zip (START_HERE.md, RELEASE_RECEIPT.json, evidence/, source/)",
     "liveCheck": "npm run verify:live",
-    "cacheTag": "?v=20261113-r1 on every entry file and, through the import map in index.html, on every ES module; the frame files take the same tag from import.meta.url; bump it with package.json version (tests/release.test.js); icon fonts inside the stylesheets carry ?v=<first 8 hex of their SHA-256> (tests/icons.test.js)"
+    "cacheTag": "?v=20261113-r2 on every entry file and, through the import map in index.html, on every ES module; the frame files take the same tag from import.meta.url; bump it with package.json version (tests/release.test.js); icon fonts inside the stylesheets carry ?v=<first 8 hex of their SHA-256> (tests/icons.test.js)"
   },
   "namesContract": {
     "shown": "name_th of 02_FACILITIES; a private hospital’s licence class appended by the licence register is left out of the shown name (scripts/build-data.py#display_name, 77 rows)",

@@ -29,7 +29,8 @@ import {parseVectorTile} from '../js/shell/mvt.js';
 import {zonesOf, zoneAt, cmTileUrl} from '../js/shell/building-units.js';
 import {footprint, containsPoint, interiorOf} from '../js/shell/building-join.js';
 
-const MAX_SITE_M = 600; // scripts/build-data.py SITE_MAX_M: a site building farther from the facility's point stops the build
+const MAX_SITE_M = 1100; // scripts/sites.py SITE_MAX_M: a site building farther from the facility's point stops the build
+// (Hotel keeps 600 m for resorts; a hospital campus is wider: 15 of the 426 areas of 2026-11-13 reach 580–1,072 m)
 const SOURCES = ['osm_polygon_auto', 'osm_polygon+site_layout', 'dol_parcels+site_layout', 'site_layout'];
 const COLUMNS = ['venue_id', 'boundary_status', 'boundary_source', 'boundary_evidence_url', 'boundary_geojson',
   'buildings_in_boundary', 'main_building_note', 'checked_by', 'checked_on', 'notes'];
@@ -167,7 +168,14 @@ async function makeRow() {
     boundary = null;
   } else fail('give --site <geojson> or --pick <ids>');
   for (const id of members) if (!byId.has(id)) fail(`building ${id} is not in candidates.json`);
-  const list = [...members].sort((a, b) => a - b).map(id => byId.get(id));
+  // One point per building: pieces of one drawn building with the same outline (CityMETER Building V4 can stack two
+  // heights on one footprint) give the same interior point — the first piece stands for the building.
+  const at = new Map();
+  for (const id of [...members].sort((a, b) => a - b)) {
+    const c = byId.get(id), key = `${c.point[0].toFixed(6)},${c.point[1].toFixed(6)}`;
+    if (!at.has(key)) at.set(key, c); else console.log(`building ${id} shares its point with building ${at.get(key).cid} (one building): left out`);
+  }
+  const list = [...at.values()];
   if (list.length < 2) fail('fewer than 2 buildings — not a multi-building site; leave the row todo');
   for (const c of list) {
     if (!containsPoint(c.fp, c.point)) fail(`point of building ${c.cid} is not inside it — re-run candidates`);
