@@ -22,6 +22,7 @@ constants.
 - **คู่เทียบ** = สถานพยาบาลประเภทเดียวกัน เตียงครึ่งเท่าถึงสองเท่า ในระยะตรง 5 กม. (ไม่มีเตียง: ประเภทเดียวกันใน 2 กม.) เรียงใกล้ก่อน เป็นรายชื่อเริ่มต้นสำหรับเทียบ ไม่ใช่ชุดคู่แข่งหรือเครือข่ายส่งต่อที่ยืนยันแล้ว
 - **ชื่อตามทะเบียน** = ชื่อเต็มที่ทะเบียนใช้ แสดงใต้ชื่อเมื่อต่างกัน (เช่นโรงพยาบาลเอกชนที่ทะเบียนต่อท้ายประเภทใบอนุญาต “โรงพยาบาลทั่วไปขนาดใหญ่”) ค้นด้วยชื่อใดก็เจอ
 - **อาคาร** = อาคารบนแผนที่ (CityMETER Building V4 หรือ OpenStreetMap ตามพื้นที่) ความสูง “สูงราว” เป็นค่าประมาณของชุดข้อมูล ไม่ใช่ผลรังวัด “สถานพยาบาลในอาคารนี้” = หมุดอยู่ในขอบอาคาร
+- **ทั้งโรงพยาบาล N อาคาร** = อาคารบนแผนที่ที่อยู่ในกรอบพื้นที่ของโรงพยาบาลใน OpenStreetMap ที่ Claude ตรวจอัตโนมัติตามกฎชื่อ หมุด และกิจการอื่นในกรอบ ยังไม่ได้เทียบผังโรงพยาบาลหรือภาพถ่ายดาวเทียม (353 แห่ง ตรวจ 13 พ.ย. 2569 จากข้อมูล OpenStreetMap ถึง 12 พ.ย. 2569 หน้าเว็บอ่าน “กรอบ OpenStreetMap (ตรวจอัตโนมัติ)”) ข้อมูล OpenStreetMap © OpenStreetMap contributors ภายใต้ ODbL 1.0 กดโรงพยาบาลแล้วแผนที่แสดงและจัดภาพทุกอาคารของไซต์พร้อมกัน ไซต์เป็นการจัดกลุ่มอาคารเพื่อดูบนแผนที่ ไม่ใช่ขอบเขตที่ดิน เนื้อที่ หรือกรรมสิทธิ์ และไม่เผยแพร่กรอบพื้นที่
 - **อาคารใกล้หมุด** = เมื่อหมุดไม่อยู่ในขอบอาคารใด มุมมองอาคาร 3 มิติเปิดที่อาคารบนแผนที่ที่ใกล้หมุดที่สุดภายใน 300 ม. (ไม่มีก็ขยายเป็น 800 ม.) โดยมีหมุดอยู่ในภาพด้วย เป็นการเลือกมุมกล้องเท่านั้น ไม่ได้ยืนยันว่าสถานพยาบาลอยู่ในอาคารนั้น
 - **สถานีที่กำลังสร้าง** = โครงการ ยังไม่ใช่บริการ
 
@@ -157,11 +158,77 @@ building — the drawn building whose outline holds the pin, else the drawn buil
 when nothing is drawn within 300 m), framed with the pin and labelled “อาคารใกล้หมุด”. At hilly sites the buildings stand
 on the terrain (SRTM 30 m via Terrain Tiles on AWS, 3D ground × 1.5).
 
+## 7c. Campus sites (0.5.2)
+
+Owner request 2026-11-13 09:27, VERBATIM: “ช่วยเช็ค demo ของ hospital แล้ว ทำ campus boundary ให้ครอบคลุมทุกอาคารของแต่ละ รพ ที่เป็น
+กลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel / แล้ว publish ใหม่” — as CityMETER · Hotel's stay sites (Hotel 0.3.6–0.3.10) and
+their automatic source `osm_polygon_auto`. To building the OpenStreetMap side of the helper the owner answered “สร้างเลย
+ครอบคลุมด้วย (Recommended)”; to adding the tab to the research master, “อนุญาต (Recommended)”.
+
+- **Boundary (research, in the sheet)**: an OpenStreetMap area of the hospital's own, read from Geofabrik's Thailand extract
+  with OSM data to 2026-11-12 21:23 UTC (`thailand-latest.osm.pbf`, 330,174,243 bytes, MD5
+  1f22af06d8dd432dcc9ef8ba357ba4d8, downloaded 2026-11-13): 1,397 ways and relations tagged `amenity`
+  hospital/clinic/doctors, `healthcare` hospital/clinic/centre/doctor or `landuse=hospital`, paired with the 12,516 facility
+  points. Every pin counts as a pin inside an area; only hospitals (regional · private · community · public_other ·
+  subdistrict, 6,902 with a point) may take a site.
+- **Match** (skill `osm-area-site-join`, its rules read for hospitals): an area is the hospital's own when it holds the
+  hospital's pin and no other pin, carries its name and is 1,000–1,000,000 m² (250 m² for a sub-district hospital). Names
+  compare without facility-type and licence-class words (โรงพยาบาล, รพ.สต., สถานีอนามัย, ทั่วไปขนาดใหญ่ …, and the misspellings of
+  โรงพยาบาล the OSM names carry), tone marks, and ฏ for ฎ; one letter apart counts (เสริมงาม / เสิมงาม); a name followed by the
+  institution it belongs to counts (โรงพยาบาลรามาธิบดี / … มหาวิทยาลัยมหิดล); two different numbers mean another branch (พญาไท 1
+  / พญาไท 2), a number in one name only leaves the pair to a person. Several pins in one area: the best-named hospital takes
+  it when the other pins are clinics, health centres or unclassified records, never when another hospital's pin is inside
+  (Bangkok Hospital, Pat Rangsit, Lanna, Sikarin, Srinagarind, Ramathibodi, Suan Saranrom: held). Review rules, simpler
+  than Hotel 0.3.10's (no romanisation): one name begins or ends the other and the pin is the only one inside (an area
+  named as an old site, เก่า, is held); an English-only or unnamed health area holds only this pin; the pin stands up to
+  60 m outside an area with the hospital's name that holds no pin. Claude read the pairs the review rules accepted and
+  held two whose area names another village (Ban Pafang Hospital for ภูกามยาว, Ban Bo Thong Hospital for ทองแสนขัน). Result:
+  426 own areas (the hospital's name 287, best of several pins 18, review rules 121), 37 left for a person, 15 named for
+  another place, 39 building outlines, 6,385 hospitals with no area.
+- **Buildings**: the drawn buildings whose interior point stands in the area (`scripts/site-candidates.mjs candidates`,
+  then `row --site`): CityMETER Building V4 where the map draws it, else the OpenStreetMap building outlines of the same
+  extract (`--osm-buildings`; the map draws OpenStreetMap buildings there). Cut by rule: a building OpenStreetMap marks as
+  another place or use — lodging, worship, police, fire, town hall, bus station, prison or a school, college or
+  university named for another place; fuel in a building under 1,000 m²; a religious or education building tag; residential
+  land named for another place, education or religious land and another health facility's area lying inside the frame —
+  and a building mostly outside the area; added: a building mostly inside it. Staff and patients' housing, wards and
+  buildings whose name says they are the hospital's part stay. Fewer than two buildings: no site (31 areas hold one, 40
+  none). A site building may stand up to 1,100 m from the pin (Hotel: 600 m; 15 campuses reach 580–1,072 m; โรงพยาบาลพระศรี
+  มหาโพธิ์ is wider and has no site).
+- **Confidence (in the notes)**: high for an area named for the hospital, medium for a review rule (low for an English-only
+  or unnamed area); one step down when the pin stands more than 60 m from every site building or the area is more than
+  5,000 m² per reported bed (median of the 310 sites with reported beds: 227 m²); below low, held (โรงพยาบาลวัฒนานคร, 9,433
+  m² per bed).
+- **Result** (`49_SITE_BOUNDARY_CHECK`, checked 2026-11-13, `boundary_source = osm_polygon_auto`): 353 hospitals, 10,735
+  buildings — regional & general 75, private 67, community 114, other public 55, sub-district health-promoting 42;
+  CityMETER Building V4 322, OpenStreetMap 31; confidence high 260, medium 60, low 33. The rules cut 56 buildings as another
+  use and 24 mostly outside and added 17. E.g. Maharaj Nakorn Chiang Mai 247 buildings, Buddhachinaraj 129, Phra Nakhon Si
+  Ayutthaya 110 (OpenStreetMap buildings), Chulalongkorn 73, Siriraj 61, Krabi 57, Bumrungrad 7. The tab was added to the
+  research master on 2026-11-13, pasted in nine blocks and exported as CSV: 6,001 cells read back unchanged and every row's
+  points stand in drawn buildings (`site-candidates.mjs check`). One row listed two pieces of one building with the same
+  outline (CityMETER Building V4 stacks two heights on it): the helper now keeps one point per building, and the row was
+  corrected and read back again.
+- **Published** (`data.siteGroups`, `meta.siteGroups`): per site the interior points of its buildings
+  (`buildings_in_boundary`), the count, the check date, the source code and the OSM element as the reference page. The
+  boundary, the notes, the main-building note and the checker stay in the sheet (`meta.excludedFields`). The tab is read
+  through `--sites` (its CSV export, SHA-256 in `meta.siteGroups.file`); a site never re-dates the facility records
+  (`meta.checkedOn` stays the research master's check).
+- **On the map** (`js/shell/building-join.js#buildingsAtPoints`, `js/app.js#focusTarget`): opening the hospital highlights,
+  x-rays and frames every drawn building whose outline holds one of the points; a point no drawn outline holds is left
+  out, never snapped to a neighbour. The massing square round the pin grows to hold the site. The panel reads “ทั้งโรงพยาบาล
+  N อาคาร” (N = the sheet's count), the source details a “ไซต์” row (count · source · หน้าอ้างอิง · © OpenStreetMap
+  contributors · date) and the provenance line “ไซต์ กรอบ OpenStreetMap (ตรวจอัตโนมัติ) <date>”.
+- **Licence**: OpenStreetMap data is © OpenStreetMap contributors under ODbL 1.0; the points of a site are derived from an
+  OSM area (`meta.siteGroups.credits`; the “ไซต์” row links the credit to https://www.openstreetmap.org/copyright and the
+  map attribution names OpenStreetMap). The areas themselves stay in the sheet. Before the sites are used outside the demo,
+  the ODbL terms for a derived database go to legal review.
+
 ## 8. Not published
 
 Addresses, licence codes, phone numbers, operator groups, researcher notes, review and data-gap codes, identity and
 operation evidence states, matching rules, raw source records (`99_SOURCE_OBSERVATIONS`), the review queue and data-gap
-tabs, the internal sheet, its tabs as read, and private Drive/Sheet URLs (`meta.excludedFields`). Source links are public
+tabs, the internal sheet, its tabs as read, private Drive/Sheet URLs, and of `49_SITE_BOUNDARY_CHECK` the boundary,
+the notes, the main-building note and the checker (`meta.excludedFields`). Source links are public
 https pages; production rows link to the same district on CityMETER production (`?d=hospital`), never to its API.
 
 ## 9. Research follow-ups (reported, not patched in `data/`)
@@ -173,6 +240,12 @@ https pages; production rows link to the same district on CityMETER production (
   name (an affiliation filter stands in for it).
 - `data/building-units/` is Hotel's; rebuilding the units round the facility points needs the OpenStreetMap counts of
   each unit (`scripts/build-building-units.py`).
+- Campus sites to review (0.5.2, as Hotel 0.3.10: the less certain sites go to the owner after the release): 93 automatic
+  sites graded medium (60) or low (33); 37 areas left for a person and 15 named for another place, among them the
+  campuses that hold several hospitals (Bangkok Hospital, Pat Rangsit, Lanna, Sikarin) and the university campuses that
+  hold another hospital's pin (Srinagarind, Ramathibodi); 40 own areas with no drawn building inside; โรงพยาบาลพระศรีมหาโพธิ์
+  wider than 1,100 m. A layout check turns a row into `osm_polygon+site_layout`.
+- โรงพยาบาลรามาธิบดีจักรีนฤบดินทร์ (CMH-41373, Samut Prakan) has its pin inside Ramathibodi's Bangkok campus.
 - One HA directory category reads as published (“HA Accreditation2”, 1 row) until the sheet names its stage.
 
 ## 10. Rebuild
@@ -184,6 +257,8 @@ python3 -I scripts/build-receipts.py --api $BUILD/api --out .
 # tabs: scripts/export-sheet-tabs.js in the owner's browser on the sheet's HTML view → $BUILD/tabs/<tab>.json
 python3 -I scripts/build-data.py --tabs $BUILD/tabs --api $BUILD/api --points $BUILD/points \
     --index data/area-index.json --transit <montri-th/transit checkout> --out .
+# campus sites: the CSV export of the live 49_SITE_BOUNDARY_CHECK tab (or --sites <CSV> on build-data.py)
+python3 -I scripts/apply-sites.py --sites <49_SITE_BOUNDARY_CHECK.csv>
 python3 scripts/build-pictogram-font.py <MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf>
 npm test
 ```

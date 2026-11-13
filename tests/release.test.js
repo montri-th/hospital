@@ -56,7 +56,7 @@ test('one product version across package.json, design intent and the handoff JSO
 });
 
 test('publication hygiene: no private document links, credentials, research sheet or LDS library in the tree', () => {
-  const skip = new Set(['.git', 'node_modules', 'evidence', 'dist', '.handoff-stage']); // git-ignored outputs
+  const skip = new Set(['.git', 'node_modules', 'evidence', 'dist', '.handoff-stage', 'sites']); // git-ignored outputs (sites/: the site helper's research outputs)
   const files = [];
   const walk = dir => { for (const name of readdirSync(dir)) { if (skip.has(name)) continue; const p = join(dir, name); if (statSync(p).isDirectory()) walk(p); else files.push(p); } };
   walk(ROOT);

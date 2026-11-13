@@ -303,6 +303,17 @@ export default {
     'สาขา': 'specialties',
     'โปรแกรม': 'programmes',
     'รหัส': 'ID',
+    // The campus site (Hospital 0.5.2): the chip (“ทั้งโรงพยาบาล 24 อาคาร”: the word, then the count in its own span), the
+    // source row and the site sources (data/hospitals.json meta.siteGroups.sources)
+    'ไซต์': 'Site',
+    'หน้าอ้างอิง': 'Reference page',
+    'ทั้งโรงพยาบาล': 'Whole hospital:',
+    'ทั้งโครงการ': 'Whole site:',
+    'อาคารในขอบเขตไซต์ของสถานพยาบาล': "Buildings inside the facility's site boundary",
+    'กรอบ OpenStreetMap (ตรวจอัตโนมัติ)': 'OpenStreetMap area (checked automatically)',
+    'กรอบ OpenStreetMap + ผังโรงพยาบาล': 'OpenStreetMap area + hospital layout',
+    'รูปแปลงกรมที่ดิน + ผังโรงพยาบาล': 'Department of Lands parcels + hospital layout',
+    'ผังโรงพยาบาล': 'hospital layout',
     'ภูมิประเทศ': 'Terrain',
     'จากชื่อเขต/อำเภอในทะเบียน': 'From the district name in the register',
     'จากรหัสอำเภอในทะเบียน HCODE': 'From the district code in the HCODE register',
@@ -483,6 +494,8 @@ export default {
     [re(`${N} ${AREA}นี้`), (m) => (m[1] === '1' ? 'this district' : `these ${m[1]} districts`)],
     [re(`${N} สังกัด`), (m, t) => `${m[1]} ${t.plural(m[1], 'affiliation', 'affiliations')}`],
     [re(`${N} โปรแกรม`), (m, t) => `${m[1]} ${t.plural(m[1], 'programme', 'programmes')}`],
+    // A campus site's count (the chip and the source row: “24 อาคาร”)
+    [re(`${N} อาคาร`), (m, t) => `${m[1]} ${t.plural(m[1], 'building', 'buildings')}`],
     [re(`อีก ${N} (รายการ|สาขา|โปรแกรม)`), (m, t) => `${m[1]} more ${{'รายการ': t.plural(m[1], 'item', 'items'), 'สาขา': t.plural(m[1], 'specialty', 'specialties'), 'โปรแกรม': t.plural(m[1], 'programme', 'programmes')}[m[2]]}`],
     [re(`${N} แห่งในตัวกรอง`), (m, t) => `${facilities(t, m[1])} in the filter`],
     [re(`ดูทั้งหมด ${N} แห่ง`), (m, t) => `See all ${facilities(t, m[1])}`],
@@ -532,6 +545,7 @@ export default {
     [re(`ตรวจ (.+)`), (m, t) => { const d = t.date(m[1]); return d === m[1] ? null : `checked ${d}`; }],
     [re(`${N} โปรแกรม`), (m, t) => `${m[1]} ${t.plural(m[1], 'programme', 'programmes')}`],
     [/^CityMETER Transit (.+)$/, (m, t) => `CityMETER Transit ${t.date(m[1])}`],
+    [/^ไซต์ (.+?)(?: (\d{1,2} \S+ \d{4}))?$/, (m, t) => { const x = t.part(m[1]); return x == null ? null : `Site ${x}${m[2] ? ` ${t.date(m[2])}` : ''}`; }],
     [/^OSM (.+)$/, (m, t) => `OSM ${t.date(m[1])}`],
     [re(`SRTM 30 ม\\. \\(2543\\)`), 'SRTM 30 m (2000)'],
     // Ranks

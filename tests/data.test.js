@@ -126,6 +126,58 @@ test('context from CityMETER Transit: straight-line distances agree with the pub
   assert.ok(checked > 100);
 });
 
+test('campus sites (owner 2026-11-13 “ทำ campus boundary ให้ครอบคลุมทุกอาคารของแต่ละ รพ ที่เป็นกลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel”): a checked site publishes its buildings as points — no boundary, note or checker', () => {
+  const {raw, data} = load();
+  const meta = raw.meta.siteGroups, groups = Object.entries(raw.siteGroups);
+  assert.equal(meta.tab, '49_SITE_BOUNDARY_CHECK');
+  assert.equal(groups.length, meta.rows);
+  assert.equal(groups.length, raw.meta.counts['site.groups']);
+  assert.equal(groups.reduce((s, [, v]) => s + v.n, 0), meta.buildings);
+  assert.match(meta.file.sha256, /^[a-f0-9]{64}$/, 'the tab read back is bound by its hash');
+  for (const f of ['boundary_geojson', 'notes', 'main_building_note', 'checked_by']) assert.ok(raw.meta.excludedFields.includes(`49_SITE_BOUNDARY_CHECK.${f}`), f);
+  assert.equal(meta.maxM, 1100, 'a hospital campus may reach 1,100 m from its pin (Hotel: 600 m)');
+  const byId = new Map(data.rows.map(r => [r.id, r]));
+  for (const [i, v] of groups) {
+    const r = byId.get(raw.cols.key[Number(i)]);
+    assert.deepEqual(Object.keys(v).sort(), ['n', 'on', 'pts', 'src', 'url'], 'points, count, date, source code and link only');
+    assert.equal(v.n, v.pts.length);
+    assert.ok(v.n >= 2, `${r.id}: a site is two buildings or more`);
+    assert.equal(new Set(v.pts.map(p => p.join(','))).size, v.n, `${r.id}: one point per building`);
+    assert.ok(meta.checkedOn.includes(v.on) && v.on >= raw.meta.checkedOn, `${r.id}: dated by its own check, after the research master's`);
+    assert.ok(v.src in meta.sources, `${r.id}: a known boundary source`);
+    assert.match(raw.urls[v.url], /^https:\/\/www\.openstreetmap\.org\/(way|relation)\/\d+$/, `${r.id}: the OSM element is the reference page`);
+    assert.ok(hasPoint(r) && [0, 1, 2, 3, 4].includes(raw.cols.group[Number(i)]), `${r.id}: a hospital with a point`);
+    for (const [lon, lat] of v.pts) {
+      assert.ok(Math.round(lon * 1e6) / 1e6 === lon && Math.round(lat * 1e6) / 1e6 === lat);
+      assert.ok(distanceM(r.latitude, r.longitude, lat, lon) <= meta.maxM, `${r.id}: a site building within ${meta.maxM} m`);
+    }
+    assert.deepEqual(r.site.points, v.pts);
+    assert.equal(r.site.source, meta.sources[v.src]);
+    assert.deepEqual(r.site.credit, {text: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'}, `${r.id}: the ODbL credit`);
+  }
+  assert.equal(data.rows.filter(r => r.site).length, groups.length, 'no other row carries a site');
+  // 0.5.2: every site is an OpenStreetMap area of the hospital's own, checked by rule (osm_polygon_auto).
+  assert.deepEqual(meta.bySource, {osm_polygon_auto: 353});
+  assert.equal(meta.buildings, 10735);
+  assert.deepEqual(meta.credits.osm_polygon_auto, {text: '© OpenStreetMap contributors', licence: 'ODbL 1.0',
+    url: 'https://www.openstreetmap.org/copyright', note: 'the site follows an OpenStreetMap area of the facility, checked automatically'});
+  const sites = {'CMH-10738': [57, 'way/1561812606'], 'CMH-10660': [110, 'way/712600876'], 'CMH-11699': [7, 'relation/19809956'],
+    'CMH-13814': [61, 'relation/10888392'], 'CMH-13756': [73, 'way/31974134'], 'CMH-11004': [44, 'way/817792347'], 'CMH-01598': [2, 'way/1177778842']};
+  for (const [id, [n, el]] of Object.entries(sites)) {
+    const r = byId.get(id);
+    assert.equal(r.site?.n, n, id);
+    assert.equal(r.site.source, 'กรอบ OpenStreetMap (ตรวจอัตโนมัติ)', id);
+    assert.equal(r.site.url, `https://www.openstreetmap.org/${el}`, id);
+  }
+  // Held: an area that holds another hospital's pin (Bangkok Hospital, Pat Rangsit), an old site (บ้านไผ่ เก่า), an area
+  // named for another village (Ban Pafang), a frame far larger than the hospital (Wattana Nakhon), wider than 1,100 m.
+  for (const id of ['CMH-11630', 'CMH-11789', 'CMH-11002', 'CMH-40745', 'CMH-10869', 'CMH-12269']) assert.ok(!byId.get(id).site, `${id}: no site`);
+  // Nothing of the boundary or the notes is published.
+  const site = JSON.stringify([raw.siteGroups, meta]);
+  assert.ok(!/geojson|Polygon|coordinates|โฉนด|ระวาง|เลขที่ดิน|ไร่|Claude/.test(site), 'no boundary shape, deed, sheet note or checker');
+  assert.ok(Object.values(raw.siteGroups).every(v => v.pts.flat().every(x => !Number.isInteger(x))), 'points only');
+});
+
 test('publication hygiene: no phone, address, licence code, raw record or researcher text; links are https and never a private document', () => {
   const {raw} = load();
   for (const f of ['official_address', 'phone', 'official_license_code', 'notes', 'review_reason_codes', 'data_gap_codes', '99_SOURCE_OBSERVATIONS raw records'])
