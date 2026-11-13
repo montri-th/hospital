@@ -94,17 +94,20 @@ export const ADMIN_TH = Object.freeze({
   conflict: 'หมุดกับทะเบียนอยู่คนละจังหวัด',
   none: 'ไม่ระบุจังหวัด',
 });
+/** The word of a facility's site chip by facility group (“ทั้งโรงพยาบาล 24 อาคาร”); other groups read “ทั้งโครงการ”. */
+const SITE_WORD = Object.freeze({regional: 'โรงพยาบาล', private: 'โรงพยาบาล', community: 'โรงพยาบาล', public_other: 'โรงพยาบาล', subdistrict: 'โรงพยาบาล'});
 
 /**
  * The provenance line every view that shows numbers ends with: dataset · source · date · boundary (each part in
  * `data-prov`, its word for screen readers), then the method link. Rail, accreditation and price sources join the
  * source part when the view shows them.
  */
-export function provenance(ctx = {}, boundary = '', {rail = false, quality = false, price = false, services = false} = {}) {
+export function provenance(ctx = {}, boundary = '', {rail = false, quality = false, price = false, services = false, site = null} = {}) {
   const meta = ctx.meta || {};
   const sources = ['CityMETER Hospital', 'ทะเบียน HCODE',
     quality ? 'HA · JCI' : '', price ? 'DIT' : '', services ? 'สปสช. · เว็บผู้ให้บริการ' : '',
-    rail ? `CityMETER Transit ${thaiDate(meta.context?.rail?.asOf || '')}`.trim() : ''].filter(Boolean);
+    rail ? `CityMETER Transit ${thaiDate(meta.context?.rail?.asOf || '')}`.trim() : '',
+    site ? `ไซต์ ${site.source || 'งานวิจัย'} ${thaiDate(site.on || '')}`.trim() : ''].filter(Boolean);
   return `<p class="hint panel-foot provenance"><span class="prov-part" data-prov="dataset">${pic('dataset')}<span class="sr-only">ชุดข้อมูล </span>CityMETER Hospital</span> <span class="prov-part" data-prov="source"><span class="sr-only">แหล่ง</span>จาก ${esc(sources.join(' · '))}</span><span class="prov-part" data-prov="date">${pic('date')}<span class="sr-only">ตรวจ </span>${esc(thaiDate(meta.checkedOn || ''))}</span><span class="prov-part" data-prov="boundary">${pic('area')}<span class="sr-only">ขอบเขต </span>${esc(boundary)}</span><span class="prov-part prov-method"><a href="${METHOD_URL}" target="_blank" rel="noopener">วิธีนับ</a></span></p>`;
 }
 
@@ -499,6 +502,8 @@ export function renderFacility(d, ctx = {}) {
   const bd = d.building;
   const buildingChip = bd?.others ? `<button type="button" class="fact-chip" data-action="select-building" data-id="${esc(bd.key)}" title="หมุดของสถานพยาบาลอีก ${num(bd.others)} แห่งอยู่ในอาคารนี้บนแผนที่">${pic('building')}อีก ${num(bd.others)} แห่งในอาคารนี้</button>` : '';
   const cancelled = r.registry === 'cancelled' ? '<span class="fact-chip is-quiet" title="สถานะรหัสในทะเบียน HCODE">ยกเลิกรหัสในทะเบียน</span>' : '';
+  // The facility's campus site (49_SITE_BOUNDARY_CHECK, Hospital 0.5.2): its buildings, as the map shows them together.
+  const siteChip = r.site ? `<span class="fact-chip" title="อาคารในขอบเขตไซต์ของสถานพยาบาล · ${esc(r.site.source || 'งานวิจัย')}${r.site.on ? ` · ${esc(thaiDate(r.site.on))}` : ''}">${pic('building')}ทั้ง${esc(SITE_WORD[d.group?.id] || 'โครงการ')} ${nw(`${num(r.site.n)} อาคาร`)}</span>` : '';
   const point = coords
     ? `<span class="data-number">${esc(coords)}</span><br><span class="hint">หมุดของ CityMETER Hospital</span>`
     : '<span>ไม่มีหมุด · นับในพื้นที่ตามทะเบียน</span>';
@@ -510,7 +515,7 @@ export function renderFacility(d, ctx = {}) {
         <p class="eyebrow eyebrow-cue">${esc(d.group?.th || '')}${r.rawType && r.rawType !== d.group?.th ? ` · ${esc(r.rawType)}` : ''}</p>
         <h2>${esc(r.name || 'ไม่มีชื่อ')}</h2>
         ${subLine(r, 'branch-name', 'p')}</div></div>
-      <div class="fact-chips">${bedsChip}${areaChip}${affChip}${levelChip}${haChip}${jciChip}${roleChip}${railChip}${nextChip}${buildingChip}${cancelled}${coords ? '' : '<span class="fact-chip is-quiet">ไม่มีหมุด</span>'}</div>
+      <div class="fact-chips">${bedsChip}${areaChip}${affChip}${levelChip}${haChip}${jciChip}${roleChip}${siteChip}${railChip}${nextChip}${buildingChip}${cancelled}${coords ? '' : '<span class="fact-chip is-quiet">ไม่มีหมุด</span>'}</div>
       ${actionBar({kind: 'facility', row: r, area: d.area ? {place: `${w.area}${d.area.name}`, province: prov} : r.province ? {place: '', province: prov} : null,
         point: hasPoint(r) ? {lat: r.latitude, lon: r.longitude, role: 'point'} : null})}
       <details class="source-details"><summary>ที่มาและพิกัด</summary>
@@ -527,6 +532,7 @@ export function renderFacility(d, ctx = {}) {
           ${r.basket || r.ref ? `<dt>ราคาแล็บ</dt><dd>${link(meta.basket?.source || 'https://hospitals.dit.go.th/', 'กรมการค้าภายใน (DIT)')}${meta.basket?.checkedOn?.length ? ` · ตรวจ ${nw(esc(thaiDate(meta.basket.checkedOn.at(-1))))}` : ''} · วันที่มีผลไม่ระบุในแหล่ง</dd>` : ''}
           ${r.svc?.on ? `<dt>บริการ</dt><dd>ตรวจ ${nw(esc(thaiDate(r.svc.on)))}</dd>` : ''}
           ${r.registry ? `<dt>สถานะรหัส</dt><dd>${r.registry === 'cancelled' ? 'ยกเลิก' : 'กำลังใช้งาน'} · ทะเบียน HCODE</dd>` : ''}
+          ${r.site ? `<dt>ไซต์</dt><dd>${nw(`${num(r.site.n)} อาคาร`)} · ${esc(r.site.source || 'งานวิจัย')}${r.site.url ? ` · ${link(r.site.url, 'หน้าอ้างอิง')}` : ''}${r.site.credit ? ` · ${link(r.site.credit.url, r.site.credit.text)}` : ''}${r.site.on ? ` · ${nw(esc(thaiDate(r.site.on)))}` : ''}</dd>` : ''}
         </dl>
         <p class="links">${d.area ? link(productionLink({province: r.province, area: r.area}), 'ดูพื้นที่นี้ใน CityMETER') : ''}</p>
       </details>
@@ -534,7 +540,7 @@ export function renderFacility(d, ctx = {}) {
     ${priceSection(r, meta)}
     ${serviceSection(r)}
     ${compsetSection(d.compset, d.group?.th)}
-    ${provenance(ctx, d.area ? `${w.area}${d.area.name} ${prov}` : prov || 'ไม่ระบุจังหวัด', {rail: Boolean(r.rail || r.railNext), quality: Boolean(r.ha || r.jci.length), price: Boolean(r.basket || r.ref), services: Boolean(r.svc)})}`;
+    ${provenance(ctx, d.area ? `${w.area}${d.area.name} ${prov}` : prov || 'ไม่ระบุจังหวัด', {rail: Boolean(r.rail || r.railNext), quality: Boolean(r.ha || r.jci.length), price: Boolean(r.basket || r.ref), services: Boolean(r.svc), site: r.site || null})}`;
 }
 
 /* ---------- Active filter chips ---------- */

@@ -59,11 +59,11 @@ import {createFrameStore, provinceLocator} from './frames.js';
 import {buildOverview, buildAreaProfile, buildFacilityDetail, buildBuildingProfile, buildAffProfile, buildStationProfile, stationsOf, listOrder, STATION_RADIUS_M} from './profile-model.js';
 import {renderOverview, renderArea, renderBuilding, renderFacility, renderStation, renderAffCard, renderFilterChips, subLine, esc, num, pct, words, meters, bedsText} from './panel.js';
 import {installStationLayer} from './stations.js';
-import {joinBuildings, nearestBuilding} from './shell/building-join.js';
+import {joinBuildings, nearestBuilding, buildingsAtPoints} from './shell/building-join.js';
 import {buildMapStyle, basemapPalette, TILEJSON_URL, MASSING_BEFORE, VENUE_XRAY_BEFORE} from './shell/map-style.js';
 import {installMassing, outerRings} from './massing.js';
 import {createBuildingUnitStore, cmTileUrl, CM_ATTRIBUTION} from './shell/building-units.js';
-import {presetFor, applyPreset, fitPitched, fitBuilding, twoPointBearing, screenBounds, groundAt, BUILDING_MAX_ZOOM} from './shell/camera.js';
+import {presetFor, applyPreset, fitPitched, fitBuilding, twoPointBearing, screenBounds, groundAt, pieceGround, groundProbes, BUILDING_MAX_ZOOM} from './shell/camera.js';
 import {installVenueXray} from './shell/venue-xray.js';
 import {guardRetainedTiles, guardElevationFreeze, mapBudget, budgetPixelRatio, watchContext} from './shell/maplibre-guard.js';
 import {buildBreadcrumb, renderBreadcrumb, breadcrumbText} from './breadcrumb.js';
@@ -602,6 +602,9 @@ const FACILITY_REACH_M = 300, FACILITY_REACH_FAR_M = 800;
 /** Refits of one frame: the building may arrive in steps (the nearest drawn, then the one holding the pin, a wider
  *  reach) and the ground may move once when its DEM tile arrives; never after the user has moved the map. */
 const MAX_REFITS = 3;
+/** Refits of one frame when the ground under it moves — a budget of their own (Hotel 0.3.9: a site spent the three above
+ *  on the legend and the arriving buildings before its DEM came in, then stayed framed on flat ground). */
+const MAX_GROUND_REFITS = 3;
 const facilityReach = id => (state.facilityReach?.id === id ? state.facilityReach.m : FACILITY_REACH_M);
 
 /** The drawn building nearest a pin that falls in none (js/shell/building-join.js#nearestBuilding), per join and pieces. */
@@ -615,10 +618,33 @@ function nearestOf(r) {
 }
 
 /**
- * The building being looked at: the open building; else the building the open facility's point falls in, else the
- * drawn building nearest its pin (`near`: the camera's building, named “อาคารใกล้หมุด”, never a join).
- * {id, key, refs, anchor: [lon, lat], near} — key/refs are null/[] while no building is known (tiles still loading, or
- * nothing drawn within the reach); null without a point.
+ * The drawn buildings of the open facility's campus site (49_SITE_BOUNDARY_CHECK of the research master,
+ * js/shell/building-join.js#buildingsAtPoints, as Hotel's stay sites), per join and pieces; null without a site.
+ */
+function siteOf(r) {
+  if (!r?.site) return null;
+  const pieces = state.massing?.buildings() || [], join = state.join;
+  if (siteOf.id !== r.id || siteOf.join !== join || siteOf.pieces !== pieces) {
+    Object.assign(siteOf, {id: r.id, join, pieces});
+    siteOf.value = join ? buildingsAtPoints(pieces, r.site.points, join.keyOfPiece) : null;
+  }
+  return siteOf.value;
+}
+
+/** Half-size (m) of the square round the facility's pin that holds every building of its site, with a margin; 0 without one. */
+function siteReach(r) {
+  if (!r?.site?.points?.length || !hasPoint(r)) return 0;
+  const kx = 111320 * Math.cos((r.latitude * Math.PI) / 180), ky = 110574;
+  return 80 + Math.max(...r.site.points.map(([lon, lat]) => Math.max(Math.abs(lon - r.longitude) * kx, Math.abs(lat - r.latitude) * ky)));
+}
+
+/**
+ * The building being looked at: the open building; for a facility with a campus site, every drawn building of its site,
+ * framed together (`site.n`: buildings found; the panel's chip counts the site's own list); else the building the open
+ * facility's point falls in, else the drawn building nearest its pin (`near`: the camera's building, named
+ * “อาคารใกล้หมุด”, never a join).
+ * {id, key, refs, anchor: [lon, lat], near, site?} — key/refs are null/[] while no building is known (tiles still
+ * loading, or nothing drawn within the reach); null without a point.
  */
 function focusTarget() {
   const {mode, id} = state.panel, j = state.join;
@@ -632,6 +658,8 @@ function focusTarget() {
   if (mode === 'facility') {
     const r = rowById(id);
     if (!hasPoint(r)) return null;
+    const site = siteOf(r);
+    if (site?.refs.length) return {id: `facility:${r.id}`, key: `site:${r.id}`, refs: site.refs, anchor: [r.longitude, r.latitude], near: false, site: {n: site.keys.length}};
     const inside = j?.byRow.get(r.id) || null;
     const near = inside ? null : nearestOf(r)?.key || null;
     return {id: `facility:${r.id}`, ...of(inside || near), anchor: [r.longitude, r.latitude], near: Boolean(near)};
@@ -663,8 +691,9 @@ function focusShape(target = focusTarget()) {
     return pts.map(q => [q[0], q[1], q[2], q[2] ? g : low]);
   });
   if (!points.length) points = rings.flatMap(({ring, height}) => ring.flatMap(([lng, lat]) => [[lng, lat, 0], [lng, lat, height]]));
-  // The building nearest the pin is framed with the pin, so the facility's symbol stays in view beside it.
-  if (points.length && target?.near) points = [...points, terrain ? [target.anchor[0], target.anchor[1], 0, pinGround] : [target.anchor[0], target.anchor[1], 0]];
+  // The building nearest the pin, or a facility's campus site, is framed with the pin, so the facility's symbol stays in
+  // view beside it.
+  if (points.length && (target?.near || target?.site)) points = [...points, terrain ? [target.anchor[0], target.anchor[1], 0, pinGround] : [target.anchor[0], target.anchor[1], 0]];
   if (!points.length && target) {
     // Not known yet: a 90 m box round the point (12 m tall), framed the same way.
     const [lon, lat] = target.anchor, dLat = 45 / 110574, dLng = 45 / (111320 * Math.cos((lat * Math.PI) / 180));
@@ -710,11 +739,10 @@ function syncFocusBuilding() {
 function pieceGrounds(f, fallback = 0) {
   const map = state.map;
   if (!map?.terrain) return {g: 0, low: 0};
-  const g = groundAt(map, centroidOf(f)) || fallback;
   const ring = outerRings(f)[0] || [];
-  let low = g;
-  for (let i = 0; i < ring.length - 1; i++) { const e = groundAt(map, ring[i]); if (e && e < low) low = e; }
-  return {g, low};
+  // A DEM artefact far below the piece's ground is not a wall to draw or frame (js/shell/camera.js#pieceGround; Hotel
+  // 0.3.9: a site on a hill read −2,110 m under one vertex).
+  return pieceGround(groundAt(map, centroidOf(f)), ring.slice(0, -1).map(p => groundAt(map, p)), fallback);
 }
 
 /** Vertex mean of a feature's first outer ring ([lon, lat]): where MapLibre samples the ground of a fill-extrusion. */
@@ -765,7 +793,11 @@ function frameFocus({instant = false} = {}) {
   const box = visibleBox();
   state.userCamera = false;
   // The ground the frame was computed on (0 off terrain or before its DEM tile arrives): onGroundChange refits when it moves.
-  state.framed = {id: target.id, key: shape.key, refits: state.framed?.id === target.id ? state.framed.refits : 0, ground: groundAt(map, target.anchor), box};
+  // A campus site reaches past its pin: the ground is watched at its outermost points too (js/shell/camera.js#groundProbes).
+  const probes = groundProbes(target.anchor, shape.points);
+  const same = state.framed?.id === target.id;
+  state.framed = {id: target.id, key: shape.key, refits: same ? state.framed.refits : 0, groundRefits: same ? state.framed.groundRefits || 0 : 0,
+    ground: groundAt(map, target.anchor), probes, grounds: probes.map(p => groundAt(map, p)), box};
   if (!state.view3d) {
     const [q0] = shape.points;
     const b = shape.points.reduce((acc, q) => acc.extend([q[0], q[1]]), new maplibregl.LngLatBounds([q0[0], q0[1]], [q0[0], q0[1]]));
@@ -784,16 +816,17 @@ function frameFocus({instant = false} = {}) {
 
 /**
  * The ground changed under the building being looked at (terrain on or off, its DEM tiles arrived): the x-ray moves
- * with it, and the building camera frames it again on the ground as drawn — unless the user moved the map (the
- * refits of refitOnNewBuilding count here too).
+ * with it, and the building camera frames it again on the ground as drawn — unless the user moved the map (a budget
+ * of its own, MAX_GROUND_REFITS: the refits for a new box or building come before the DEM on a first load).
  */
 function onGroundChange() {
   if (!state.loaded) return;
   syncFocusBuilding();
   const target = twoPoint() ? focusTarget() : null;
-  if (!target || !state.framed || state.framed.id !== target.id || state.userCamera || state.framed.refits >= MAX_REFITS) return;
-  if (Math.abs(groundAt(state.map, target.anchor) - (state.framed.ground || 0)) < 3) return; // the frame still holds
-  state.framed.refits++;
+  if (!target || !state.framed || state.framed.id !== target.id || state.userCamera || (state.framed.groundRefits || 0) >= MAX_GROUND_REFITS) return;
+  const {probes = [target.anchor], grounds = [state.framed.ground || 0]} = state.framed;
+  if (probes.every((p, i) => Math.abs(groundAt(state.map, p) - (grounds[i] || 0)) < 3)) return; // the frame still holds
+  state.framed.groundRefits = (state.framed.groundRefits || 0) + 1;
   frameFocus();
 }
 
@@ -1291,7 +1324,7 @@ function massingRegions() {
   }
   if (state.panel.mode === 'facility') {
     const r = rowById(state.panel.id);
-    if (hasPoint(r)) return [squareAround(r.longitude, r.latitude, facilityReach(r.id))];
+    if (hasPoint(r)) return [squareAround(r.longitude, r.latitude, Math.max(facilityReach(r.id), siteReach(r)))];
     const a = r?.area ? areaById(r.area) : null;
     if (a?.feature) return outerRings(a.feature);
   }

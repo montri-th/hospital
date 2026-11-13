@@ -153,6 +153,7 @@ export function decodeDataset(json, index) {
   const stations = (json.stations || []).map((s, i) => ({...s, index: i}));
   const basketItems = M.basket?.items || [];
   const svcMeta = M.services || {domains: [], named: [], programmes: []};
+  const siteGroups = json.siteGroups || {}, siteSources = M.siteGroups?.sources || {}, siteCredits = M.siteGroups?.credits || {};
   const rows = [];
   let dropped = 0;
   for (let i = 0; i < n; i++) {
@@ -186,6 +187,17 @@ export function decodeDataset(json, index) {
       rail: c.rail[i] >= 0 ? {station: stations[c.rail[i]], m: c.railM[i]} : null,
       railNext: c.rail2[i] >= 0 ? {station: stations[c.rail2[i]], m: c.rail2M[i]} : null,
     };
+    // The facility's campus site (Hospital 0.5.2, owner 2026-11-13 “ทำ campus boundary ให้ครอบคลุมทุกอาคารของแต่ละ รพ ที่เป็น
+    // กลุ่มอาคาร ในลักษณะเดียวกับที่เราทำแล้วกับ hotel”): the buildings inside its research site boundary, as one interior
+    // point each (49_SITE_BOUNDARY_CHECK of the research master); the boundary stays in the sheet.
+    const site = siteGroups[k];
+    if (site?.pts?.length && row.longitude !== null) {
+      const credit = siteCredits[site.src];
+      row.site = {points: site.pts, n: site.n || site.pts.length, on: site.on || '', source: siteSources[site.src] || '',
+        url: site.url >= 0 ? json.urls?.[site.url] || '' : '',
+        // A site drawn from an OpenStreetMap area links the database's credit (ODbL 1.0), as Hotel's do.
+        credit: credit?.text && credit?.url ? {text: credit.text, url: credit.url} : null};
+    }
     const a = area ? index.byId.get(area) : null;
     const p = province ? PROVINCE_LIST.find(x => x.code === province) : null;
     row.haystack = lower([row.name, row.nameOff, row.id, a?.name, a?.nameEn, p?.th, p?.en, group.th, group.short, row.rawType,

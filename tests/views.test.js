@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {load} from './helpers.js';
 import {buildOverview, buildAreaProfile, buildFacilityDetail, buildBuildingProfile, buildAffProfile, buildStationProfile, stationsOf, compsetOf, listOrder, unplacedOf, COMPSET_RADIUS_M, COMPSET_RADIUS_SMALL_M} from '../js/profile-model.js';
-import {renderOverview, renderArea, renderBuilding, renderFacility, renderStation, renderAffCard, renderFilterChips, provenance, pct, meters, bedsText} from '../js/panel.js';
+import {renderOverview, renderArea, renderBuilding, renderFacility, renderStation, renderAffCard, renderFilterChips, provenance, pct, meters, bedsText, thaiDate} from '../js/panel.js';
 import {summarizeAreaInsight, filterAreaRows} from '../js/area-insight.js';
 import {summarize, productionLink, filterRows, unitWords, hasPoint, stationLink} from '../js/model.js';
 import {buildChartModel, areaMatrix, affiliationRanking} from '../js/chart-model.js';
@@ -243,4 +243,26 @@ test('a private hospital reads without its licence class; the register name sits
   assert.ok(text(html).includes('ชื่อตามทะเบียน โรงพยาบาลบางมดโรงพยาบาลทั่วไปขนาดใหญ่'));
   assert.ok(filterRows(data.rows, {search: 'บางมด'}).includes(hc), 'both names find it');
   assert.ok(!data.rows.some(r => /\S(โรงพยาบาลทั่วไปขนาด(ใหญ่|เล็ก))$/.test(r.name)), 'no shown name ends with a licence class');
+});
+
+test('a facility with a campus site (0.5.2) reads “ทั้งโรงพยาบาล N อาคาร”, its site in the details and the provenance; others read as before', () => {
+  const {data, index} = load();
+  const ctx = ctxFor(data, index);
+  const base = data.rows.find(r => r.id === FACILITY);
+  const detail = r => buildFacilityDetail(r, {scopeRows: data.rows, allRows: data.rows, index, groups: data.groups, affiliations: data.affiliations});
+  // A fixture site (the shape js/model.js gives a row from data/hospitals.json siteGroups), not a published one.
+  const site = {points: [[100.5525, 13.7462], [100.5528, 13.7466], [100.5521, 13.7468]], n: 3, on: '2026-11-13',
+    source: 'กรอบ OpenStreetMap (ตรวจอัตโนมัติ)', url: 'https://www.openstreetmap.org/way/1',
+    credit: {text: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'}};
+  const html = renderFacility(detail({...base, site}), ctx), t = text(html);
+  assert.ok(t.includes('ทั้งโรงพยาบาล 3 อาคาร'), 'the chip counts the site’s buildings');
+  assert.ok(t.includes('ไซต์ 3 อาคาร · กรอบ OpenStreetMap (ตรวจอัตโนมัติ) · หน้าอ้างอิง · © OpenStreetMap contributors · 13 พ.ย. 2569'),
+    'the source details name the site source, its reference page, the ODbL credit and the check date');
+  assert.ok(html.includes('href="https://www.openstreetmap.org/way/1"') && html.includes('href="https://www.openstreetmap.org/copyright"'));
+  assert.match(t, /จาก [^]*ไซต์ กรอบ OpenStreetMap \(ตรวจอัตโนมัติ\) 13 พ\.ย\. 2569/, 'the provenance names the site source and date');
+  // The data's own check date stays the research master's: a site never re-dates the facility records.
+  assert.ok(t.includes(`ตรวจ ${thaiDate(data.meta.checkedOn)}`), 'the provenance date is the research master’s check');
+  const plain = text(renderFacility(detail(base), ctx));
+  assert.ok(!/ทั้ง(โรงพยาบาล|โครงการ) \d/.test(plain) && !/(?:^|\s)ไซต์ (?:\d|กรอบ|รูปแปลง|ผัง|งานวิจัย)/.test(plain),
+    'a facility without a site carries no site words (“เว็บไซต์” of its services is not one)');
 });

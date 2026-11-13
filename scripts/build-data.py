@@ -74,6 +74,9 @@ link to the same district on CityMETER production (?d=hospital).
 """
 import argparse, collections, datetime, glob, hashlib, json, math, os, re, sys, unicodedata
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sites as SITES  # noqa: E402  (campus sites, 49_SITE_BOUNDARY_CHECK; Hospital 0.5.2)
+
 RAIL_MAX_M = 2000
 TABS = ['02_FACILITIES', '99_SOURCE_OBSERVATIONS', '08_ACCREDITATION', '11_PRICE_BASKET', '13_SERVICE_PROFILE',
         '15_SERVICE_FRAMEWORK', '10_SOURCES', '01_BRANDS', '03_AREA_SUMMARY', '12_IDENTITY_LINKS']
@@ -254,6 +257,7 @@ def main():
     ap.add_argument('--read-on', default='2026-11-05', help='date the tabs were read from the sheet')
     ap.add_argument('--sheet-modified', default='2026-11-01T04:46:33Z', help="the sheet's Drive modifiedTime when read")
     ap.add_argument('--out', required=True)
+    ap.add_argument('--sites', default='', help='CSV of the live 49_SITE_BOUNDARY_CHECK tab (campus sites; its header and checked rows suffice); scripts/sites.py')
     a = ap.parse_args()
 
     tabs, tab_shas = read_tabs(a.tabs)
@@ -578,6 +582,13 @@ def main():
                              'status': s['status'], 'lines': s['lines'], 'lineIds': s['lineIds']})
     for k in ('rail', 'rail2'):
         cols[k] = [remap[x] if x >= 0 else -1 for x in cols[k]]
+    # SITE: the buildings of each checked campus site (49_SITE_BOUNDARY_CHECK) as interior points (scripts/sites.py); site
+    # links are interned after the row links. The boundary, notes and checker stay in the sheet.
+    site_groups, site_meta = {}, None
+    if a.sites:
+        site_rows, site_receipt = SITES.read_csv(a.sites)
+        site_groups, site_counts, site_meta = SITES.build_sites(site_rows, cols, lambda u: intern(urls, url_index, u), site_receipt)
+        counts.update(site_counts)
     counts['stations.operating'] = sum(1 for s in out_stations if s['status'] == 'operating')
     counts['stations.construction'] = sum(1 for s in out_stations if s['status'] == 'construction')
 
@@ -628,12 +639,14 @@ def main():
         'conflicts': conflicts,
         'checks': {'pointDistrictDisagree': len(disagree_district), 'pointProvinceDisagree': len(disagree_province),
                    'codeNameDisagree': len(code_disagree), 'pointProvinceDisagreeSample': disagree_province[:20]},
-        'excludedFields': EXCLUDED,
+        'excludedFields': EXCLUDED + (SITES.EXCLUDED if site_meta else []),
         'notes': [
             'Distances to rail stations are straight-line distances between reference points.',
             'A gap (no price, no accreditation, no service evidence) is not a low value: most records have not been researched for it.',
         ],
     }
+    if site_meta:
+        meta['siteGroups'] = site_meta
     out = {
         'meta': meta,
         'groups': [{'id': g[0], 'th': g[1], 'en': g[2]} for g in GROUPS],
@@ -643,6 +656,7 @@ def main():
         'stations': out_stations, 'urls': urls, 'provinces': provinces, 'districts': districts,
         'vocab': {'admin': ADMIN, 'levels': LEVELS},
         **extra,
+        **({'siteGroups': site_groups} if site_meta else {}),
         'cols': cols,
     }
     os.makedirs(os.path.join(a.out, 'data'), exist_ok=True)
